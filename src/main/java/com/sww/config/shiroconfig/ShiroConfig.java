@@ -9,6 +9,7 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
@@ -18,6 +19,7 @@ import java.util.Map;
 /**
  * @author sww
  */
+@Configuration
 public class ShiroConfig {
     @Bean
     public MyRealm myRealm() {
@@ -25,8 +27,8 @@ public class ShiroConfig {
     }
 
     @Bean
-    public DefaultSecurityManager defaultSecurityManager(MyRealm myRealm) {
-        DefaultSecurityManager manager = new DefaultSecurityManager();
+    public DefaultWebSecurityManager defaultWebSecurityManager(MyRealm myRealm) {
+        DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
         manager.setRealm(myRealm);
 
         DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
@@ -39,15 +41,15 @@ public class ShiroConfig {
     }
 
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultSecurityManager defaultSecurityManager) {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager defaultWebSecurityManager) {
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
-        bean.setSecurityManager(defaultSecurityManager);
+        bean.setSecurityManager(defaultWebSecurityManager);
 
         Map<String, Filter> filters = new LinkedHashMap<>(4);
         filters.put("myJwtFilter", new JwtFilter());
         bean.setFilters(filters);
 
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>(12);
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>(16);
         filterChainDefinitionMap.put("/api/token", "anon");
         filterChainDefinitionMap.put("/druid/**", "anon");
         filterChainDefinitionMap.put("/ws", "anon");
@@ -55,7 +57,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/**.html","anon");
         filterChainDefinitionMap.put("/**.css","anon");
         filterChainDefinitionMap.put("/**.ico","anon");
-        filterChainDefinitionMap.put("/**","myJWTFilter");
+        filterChainDefinitionMap.put("/**","myJwtFilter");
         bean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         return bean;

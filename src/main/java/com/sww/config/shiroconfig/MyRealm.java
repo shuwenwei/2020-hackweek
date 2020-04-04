@@ -1,8 +1,6 @@
 package com.sww.config.shiroconfig;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.sww.mapper.UserMapper;
 import com.sww.pojo.User;
 import com.sww.service.UserService;
 import org.apache.shiro.authc.AuthenticationException;
@@ -20,18 +18,18 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class MyRealm extends AuthorizingRealm {
 
-    private UserMapper userMapper;
+    private UserService userService;
 
     @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         String username = principalCollection.toString();
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-        User user = userMapper.selectOne(userQueryWrapper.eq("username", username));
+        User user = userService.getOne(userQueryWrapper.eq("username", username));
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.addRole(user.getRole());
         return info;
