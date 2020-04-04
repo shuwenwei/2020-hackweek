@@ -1,9 +1,7 @@
 package com.sww.service;
 
 import com.sww.config.WebSocketConfig;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Service;
-
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnOpen;
@@ -42,7 +40,8 @@ public class WebSocketService {
     @OnOpen
     public void onOpen(Session session) {
         this.session = session;
-//
+        String username = (String) session.getUserProperties().get("username");
+        services.put(username, this);
     }
 
     @OnClose
