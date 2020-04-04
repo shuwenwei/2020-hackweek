@@ -1,6 +1,7 @@
 package com.sww.util;
 
 import com.sww.pojo.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -21,24 +22,27 @@ public class JwtUtil {
         return Jwts.builder()
                 .setExpiration(new Date(System.currentTimeMillis()+EXPIRE_TIME))
                 .setId(user.getUsername())
-                .setSubject(user.getUsername())
+                .setSubject(user.getRole())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(SignatureAlgorithm.HS512,SECRET_KEY)
                 .compact();
     }
 
-    public static String getUsername(String token){
-        String username;
+    public static User getUser(String token){
+        Claims body;
         try {
-            username = Jwts.parser()
+            body = Jwts.parser()
                     .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+                    .getBody();
         }catch (RuntimeException e){
             return null;
         }
-        return username;
+        User user = new User();
+        user.setUsername(body.getId());
+        user.setRole(body.getSubject());
+        return user;
     }
+
 
 }

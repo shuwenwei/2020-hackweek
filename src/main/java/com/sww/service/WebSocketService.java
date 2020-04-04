@@ -1,11 +1,10 @@
 package com.sww.service;
 
 import com.sww.config.WebSocketConfig;
+import com.sww.pojo.WebSocketResponseBean;
 import org.springframework.stereotype.Service;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +24,7 @@ public class WebSocketService {
         return session;
     }
 
-    public static boolean sendMessage(String target, String message) throws IOException {
+    public static boolean sendMessage(String target, WebSocketResponseBean message) throws IOException, EncodeException {
         WebSocketService service = services.get(target);
         if (service == null) {
             return false;
@@ -33,7 +32,7 @@ public class WebSocketService {
         services.get(target)
                 .getSession()
                 .getBasicRemote()
-                .sendText(message);
+                .sendObject(message);
         return true;
     }
 
@@ -41,7 +40,15 @@ public class WebSocketService {
     public void onOpen(Session session) {
         this.session = session;
         String username = (String) session.getUserProperties().get("username");
-        services.put(username, this);
+        if (username != null) {
+            services.put(username, this);
+            return;
+        }
+        try {
+            session.getBasicRemote().sendObject(WebSocketResponseBean.REQUIRE_LOGIN);
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnClose
@@ -54,4 +61,5 @@ public class WebSocketService {
     public void onError(Session session, Throwable error) {
         error.printStackTrace();
     }
+
 }

@@ -1,5 +1,6 @@
 package com.sww.config.shiroconfig;
 
+import com.sww.pojo.User;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
@@ -7,19 +8,19 @@ import org.apache.shiro.authc.AuthenticationToken;
  */
 public class JwtToken implements AuthenticationToken {
 
-    private String token;
+    private User user;
 
-    public JwtToken(String token) {
-        this.token = token;
+    public JwtToken(User user) {
+        this.user = user;
     }
 
     @Override
     public Object getPrincipal() {
-        return token;
+        return user;
     }
 
     @Override
     public Object getCredentials() {
-        return token;
+        return user;
     }
 }

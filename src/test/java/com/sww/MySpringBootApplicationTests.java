@@ -1,6 +1,8 @@
 package com.sww;
 
 
+import com.sww.pojo.User;
+import com.sww.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,14 +14,15 @@ public class MySpringBootApplicationTests {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-//    @Autowired
-//    private UserService userService;
+    @Autowired
+    private UserService userService;
 
     @Test
     public void test() {
-        System.out.println("aeafaef");
-        redisTemplate.opsForValue().set("test", "t");
-        System.out.println(redisTemplate.opsForValue().get("test"));
+        User user = new User();
+        user.setRole("user");
+        user.setUsername("user3");
+        userService.save(user);
 //        System.out.println(userService);
 //        User user = new User();
 //        user.setId(1111111L);

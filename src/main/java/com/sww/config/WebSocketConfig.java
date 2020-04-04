@@ -1,5 +1,6 @@
 package com.sww.config;
 
+import com.sww.pojo.User;
 import com.sww.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +22,9 @@ public class WebSocketConfig extends ServerEndpointConfig.Configurator {
         String queryString = request.getQueryString();
         if (queryString != null && !"".equals(queryString)) {
             String token = queryString.split("=")[1];
-            if (token != null) {
-                String username = JwtUtil.getUsername(token);
-                sec.getUserProperties().put("username", username);
+            User user = JwtUtil.getUser(token);
+            if (user != null) {
+                sec.getUserProperties().put("username", user.getUsername());
             }
         }
         super.modifyHandshake(sec, request, response);

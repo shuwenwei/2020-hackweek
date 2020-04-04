@@ -18,18 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class MyRealm extends AuthorizingRealm {
 
-    private UserService userService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        String username = principalCollection.toString();
-        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-        User user = userService.getOne(userQueryWrapper.eq("username", username));
+//        String username = principalCollection.toString();
+//        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+//        User user = userService.getOne(userQueryWrapper.eq("username", username));
+//        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+//        info.addRole(user.getRole());
+//        return info;
+        User user = (User) principalCollection.getPrimaryPrincipal();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.addRole(user.getRole());
         return info;
@@ -42,7 +39,8 @@ public class MyRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        String username = (String) authenticationToken.getCredentials();
-        return new SimpleAuthenticationInfo(username, username, "myRealm");
+        User user = (User) authenticationToken.getCredentials();
+        String username = user.getUsername();
+        return new SimpleAuthenticationInfo(user, user, "myRealm");
     }
 }
