@@ -53,11 +53,12 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/api/token", "anon");
         filterChainDefinitionMap.put("/druid/**", "anon");
         filterChainDefinitionMap.put("/ws", "anon");
+        filterChainDefinitionMap.put("/swagger*", "anon");
         filterChainDefinitionMap.put("/**.js","anon");
         filterChainDefinitionMap.put("/**.html","anon");
         filterChainDefinitionMap.put("/**.css","anon");
         filterChainDefinitionMap.put("/**.ico","anon");
-        filterChainDefinitionMap.put("/**","myJwtFilter");
+        filterChainDefinitionMap.put("/api/token/**","myJwtFilter");
         bean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         return bean;

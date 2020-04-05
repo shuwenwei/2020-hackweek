@@ -1,5 +1,6 @@
 package com.sww.service;
 
+import com.alibaba.fastjson.JSON;
 import com.sww.config.WebSocketConfig;
 import com.sww.pojo.WebSocketResponseBean;
 import org.springframework.stereotype.Service;
@@ -45,9 +46,15 @@ public class WebSocketService {
             return;
         }
         try {
-            session.getBasicRemote().sendObject(WebSocketResponseBean.REQUIRE_LOGIN);
-        } catch (IOException | EncodeException e) {
+            session.getBasicRemote().sendText(JSON.toJSONString(WebSocketResponseBean.REQUIRE_LOGIN));
+        } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                session.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
