@@ -21,7 +21,7 @@ public class JwtUtil {
     public static String generateToken(User user){
         return Jwts.builder()
                 .setExpiration(new Date(System.currentTimeMillis()+EXPIRE_TIME))
-                .setId(user.getUsername())
+                .setId(user.getId().toString())
                 .setSubject(user.getRole())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(SignatureAlgorithm.HS512,SECRET_KEY)
@@ -39,10 +39,9 @@ public class JwtUtil {
             return null;
         }
         User user = new User();
-        user.setUsername(body.getId());
+        user.setId(Long.valueOf(body.getId()));
         user.setRole(body.getSubject());
         return user;
     }
-
 
 }

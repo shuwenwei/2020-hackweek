@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 @TableName("user")
+@NoArgsConstructor
 public class User {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;

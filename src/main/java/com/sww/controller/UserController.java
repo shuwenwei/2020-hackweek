@@ -1,6 +1,5 @@
 package com.sww.controller;
 
-import com.alibaba.druid.sql.visitor.functions.Bin;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.sww.exception.BadRequestException;
 import com.sww.pojo.RegisterUser;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
+@RequestMapping("/account")
 public class UserController {
 
     private UserService userService;
@@ -40,7 +40,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/api/token")
+    @PostMapping("/token")
     public ResponseBean login(@RequestBody User user, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
@@ -53,7 +53,7 @@ public class UserController {
         throw new BadRequestException("用户名或密码错误");
     }
 
-    @PostMapping("/api/email")
+    @PostMapping("/email")
     public ResponseBean sendRegisterEmail(@RequestBody User user, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
@@ -66,7 +66,7 @@ public class UserController {
         throw new BadRequestException("用户名或邮箱已存在");
     }
 
-    @PostMapping("/api/register")
+    @PostMapping("/register")
     public ResponseBean checkAndRegister(@RequestBody @Validated(value = OnInsertValidateGroup.class)
             RegisterUser registerUser , BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
@@ -88,7 +88,7 @@ public class UserController {
         throw new BadRequestException("注册失败");
     }
 
-    @GetMapping("/api/forget/{username}")
+    @GetMapping("/forget/{username}")
     public ResponseBean forgetPassword(@PathVariable String username) {
         User dbUser = userService.findUserByUsername(username);
         if (dbUser == null) {
@@ -103,7 +103,7 @@ public class UserController {
         return new ResponseBean(msg, null, 1);
     }
 
-    @PutMapping("/api/forget")
+    @PutMapping("/forget")
     public ResponseBean checkAndModify(@RequestBody @Validated(value = OnUpdateValidateGroup.class)
           RegisterUser registerUser, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
@@ -114,7 +114,7 @@ public class UserController {
         if (ValidateCodeUtil.checkValidateCode(email, registerUser.getCode())) {
             String generatedPassword = PasswordUtil.generate(registerUser.getPassword());
             dbUser.setPassword(generatedPassword);
-            userService.update(new UpdateWrapper<User>(dbUser));
+            userService.update(new UpdateWrapper<>(dbUser));
             return new ResponseBean("修改成功", null, 1);
         }
         throw new BadRequestException("修改失败");

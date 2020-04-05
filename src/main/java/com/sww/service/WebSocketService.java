@@ -40,9 +40,9 @@ public class WebSocketService {
     @OnOpen
     public void onOpen(Session session) {
         this.session = session;
-        String username = (String) session.getUserProperties().get("username");
-        if (username != null) {
-            services.put(username, this);
+        String id = (String) session.getUserProperties().get("userId");
+        if (id != null) {
+            services.put(id, this);
             return;
         }
         try {
@@ -60,8 +60,8 @@ public class WebSocketService {
 
     @OnClose
     public void onClose(Session session) {
-        String username = (String) session.getUserProperties().get("username");
-        services.remove(username, this);
+        String id = (String) session.getUserProperties().get("userId");
+        services.remove(id, this);
     }
 
     @OnError

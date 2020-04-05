@@ -28,12 +28,12 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        HttpServletRequest  req = (HttpServletRequest) request;
+        HttpServletRequest req = (HttpServletRequest) request;
         String token = req.getHeader("Authorization");
         if (token != null && !"".equals(token)) {
             User user = JwtUtil.getUser(token);
             if (user != null) {
-                System.out.println(user.getUsername());
+//                System.out.println(user.getUsername());
                 System.out.println(user.getRole());
                 getSubject(request, response).login(new JwtToken(user));
                 return super.isAccessAllowed(request, response, mappedValue);

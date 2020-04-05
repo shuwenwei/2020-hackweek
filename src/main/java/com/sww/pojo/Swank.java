@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.Date;
 
 /**
@@ -15,14 +17,24 @@ import java.util.Date;
 @TableName("swank")
 public class Swank {
     @TableId(type = IdType.ASSIGN_ID)
+    @NotNull(message = "id不能为空")
     private Long id;
+    @NotNull(message = "标题不能为空")
     private String title;
+    @Null
     private Long authorId;
+    @NotNull
     private String content;
+    @Null
     private Integer likeNum;
+    @Null
     private Integer starNum;
+    @Null
+    @TableField
     private Date gmtCreate;
+    @Null
     private Date gmtUpdate;
     @TableField(value = "is_delete")
+    @Null
     private Integer delete;
 }

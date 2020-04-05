@@ -24,7 +24,7 @@ public class WebSocketConfig extends ServerEndpointConfig.Configurator {
             String token = queryString.split("=")[1];
             User user = JwtUtil.getUser(token);
             if (user != null) {
-                sec.getUserProperties().put("username", user.getUsername());
+                sec.getUserProperties().put("userId", user.getId().toString());
             }
         }
         super.modifyHandshake(sec, request, response);
