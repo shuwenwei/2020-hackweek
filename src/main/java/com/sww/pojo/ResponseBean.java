@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class ResponseBean {
     private String message;
     private Object data;

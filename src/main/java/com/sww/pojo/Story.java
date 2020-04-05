@@ -24,5 +24,5 @@ public class Story {
     private Date gmtCreate;
     private Date gmtUpdate;
     @TableField(value = "is_delete")
-    private Boolean delete;
+    private Integer delete;
 }
