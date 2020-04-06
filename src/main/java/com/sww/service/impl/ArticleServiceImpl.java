@@ -30,9 +30,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public List<PackedArticle> getArticles(int page) {
+    public List<PackedArticle> getArticles(int page, int articleType) {
         return articleMapper
-                .getArticles()
+                .getArticles(articleType)
                 .setPages(page)
                 .getRecords();
     }

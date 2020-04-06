@@ -18,6 +18,13 @@ public class Article {
     private Long id;
     @NotNull(message = "标题不能为空")
     private String title;
+    /**
+     * 类型
+     * 0:swank
+     * 1:story
+     */
+    @Null
+    private Integer articleType;
     @Null
     private Long authorId;
     @NotNull(message = "内容不能为空")

@@ -21,7 +21,8 @@ public interface ArticleService extends IService<Article> {
     /**
      * 获取story列表
      * @param page 页数
+     * @param articleType 0:swank 1:story
      * @return article list
      */
-    public List<PackedArticle> getArticles(int page);
+    public List<PackedArticle> getArticles(int page, int articleType);
 }

@@ -27,7 +27,6 @@ import java.util.List;
 public class ArticleController {
 
     private ArticleService articleService;
-    private UserService userService;
     private ArticleCommentService articleCommentService;
 
     @Autowired
@@ -40,44 +39,42 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-//    @PostMapping("/swank")
-//    public ResponseBean postSwank(@RequestBody @Validated Swank swank
-//            , BindingResult bindingResult) {
-//        BindingResultUtil.checkBinding(bindingResult);
-//
-//        User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
-//        swank.setAuthorId(currentUser.getId());
-//        swankService.save(swank);
-//        return new ResponseBean("发布成功", null, 1);
-//    }
-
-    @PostMapping("/")
-    public ResponseBean postArticle(@RequestBody @Validated Article article
+    @PostMapping("/swank")
+    public ResponseBean postSwank(@RequestBody @Validated Article article
             , BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
-        User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
-        article.setId(currentUser.getId());
-        articleService.save(article);
+        saveArticle(article, 0);
         return new ResponseBean("发布成功", null, 1);
     }
 
-    @GetMapping("/")
-    public ResponseBean getArticle(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
+    @PostMapping("/story")
+    public ResponseBean postStory(@RequestBody @Validated Article article
+            , BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
-//
-//
-        List<PackedArticle> stories = articleService.getArticles(page);
+
+        saveArticle(article, 1);
+        return new ResponseBean("发布成功", null, 1);
+    }
+
+    @GetMapping("/swank")
+    public ResponseBean getSwank(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
+        BindingResultUtil.checkBinding(bindingResult);
+
+        List<PackedArticle> swanks = articleService.getArticles(page, 0);
+        return new ResponseBean("获取成功", swanks, 1);
+    }
+
+    @GetMapping("/story")
+    public ResponseBean getStory(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
+        BindingResultUtil.checkBinding(bindingResult);
+
+        List<PackedArticle> stories = articleService.getArticles(page, 1);
         return new ResponseBean("获取成功", stories, 1);
     }
 
     @PostMapping("/comment")
-    public ResponseBean postArticleComment(@RequestBody @Validated ArticleComment articleComment, BindingResult bindingResult) {
+    public ResponseBean postComment(@RequestBody @Validated ArticleComment articleComment, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
         if (articleService.articleExist(articleComment.getToStory())) {
@@ -90,27 +87,15 @@ public class ArticleController {
 
             return new ResponseBean("发布成功", null, 1);
         }
-        throw new BadRequestException("story不存在");
+        throw new BadRequestException("文章不存在");
     }
 
-
-
-//    @PostMapping("/swank/comment")
-//    public ResponseBean postSwankComment(@RequestBody @Validated SwankComment swankComment, BindingResult bindingResult) {
-//        BindingResultUtil.checkBinding(bindingResult);
-//
-//        if (swankService.swankExist(swankComment.getToSwank())) {
-//            User user = (User) SecurityUtils.getSubject().getPrincipal();
-//            Long userId = user.getId();
-//            swankComment.setAuthorId(userId);
-//            swankCommentService.save(swankComment);
-//
-//            sendMessageToWebsocket(userId);
-//
-//            return new ResponseBean("发布成功", null, 1);
-//        }
-//        throw new BadRequestException("swank不存在");
-//    }
+    private void saveArticle(Article article, int type) {
+        User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
+        article.setId(currentUser.getId());
+        article.setArticleType(type);
+        articleService.save(article);
+    }
 
     private void sendMessageToWebsocket(Long id) {
         String userId = id.toString();
@@ -118,9 +103,7 @@ public class ArticleController {
             WebSocketResponseBean bean = new WebSocketResponseBean("comment", "收到一条新回复", null);
             try {
                 WebSocketService.sendMessage(userId, bean);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (EncodeException e) {
+            } catch (IOException | EncodeException e) {
                 e.printStackTrace();
             }
         }

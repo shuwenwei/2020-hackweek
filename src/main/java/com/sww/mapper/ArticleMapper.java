@@ -14,7 +14,8 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ArticleMapper extends BaseMapper<Article> {
     /**
      * 获取story列表
+     * @param articleType 0:swank, 1:story
      * @return story list
      */
-    public IPage<PackedArticle> getArticles();
+    public IPage<PackedArticle> getArticles(int articleType);
 }
