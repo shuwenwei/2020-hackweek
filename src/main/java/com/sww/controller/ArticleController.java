@@ -1,8 +1,9 @@
 package com.sww.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sww.exception.BadRequestException;
 import com.sww.pojo.*;
-import com.sww.pojo.packed.PackedArticle;
+import com.sww.pojo.view.PackedArticle;
 import com.sww.service.*;
 import com.sww.util.BindingResultUtil;
 import org.apache.shiro.SecurityUtils;
@@ -13,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Null;
 import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.List;
@@ -58,7 +60,7 @@ public class ArticleController {
     }
 
     @GetMapping("/swank")
-    public ResponseBean getSwank(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
+    public ResponseBean getSwanks(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
         List<PackedArticle> swanks = articleService.getArticles(page, 0);
@@ -66,7 +68,7 @@ public class ArticleController {
     }
 
     @GetMapping("/story")
-    public ResponseBean getStory(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
+    public ResponseBean getStories(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
         List<PackedArticle> stories = articleService.getArticles(page, 1);
@@ -83,7 +85,7 @@ public class ArticleController {
             articleComment.setAuthorId(userId);
             articleCommentService.save(articleComment);
 
-            sendMessageToWebsocket(userId);
+            sendMessageToWebsocket(articleComment);
 
             return new ResponseBean("发布成功", null, 1);
         }
@@ -97,15 +99,30 @@ public class ArticleController {
         articleService.save(article);
     }
 
-    private void sendMessageToWebsocket(Long id) {
-        String userId = id.toString();
-        if (WebSocketService.isUserOnline(userId)) {
-            WebSocketResponseBean bean = new WebSocketResponseBean("comment", "收到一条新回复", null);
-            try {
-                WebSocketService.sendMessage(userId, bean);
-            } catch (IOException | EncodeException e) {
-                e.printStackTrace();
-            }
+    private void sendMessageToWebsocket(ArticleComment articleComment) {
+        String articleAuthorId = articleComment.getAuthorId().toString();
+        WebSocketResponseBean bean = new WebSocketResponseBean("comment", "收到一条新回复", articleComment.getContent());
+        //给文章作者发送
+        try {
+            WebSocketService.sendMessage(articleAuthorId, bean);
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
+        }
+
+        Long toComment = articleComment.getToComment();
+        if (toComment == null) {
+            return;
+        }
+        //给该条评论的作者推送
+        String toCommentAuthorId = articleCommentService
+                .getOne(new QueryWrapper<ArticleComment>()
+                        .eq("to_comment", toComment))
+                .getAuthorId()
+                .toString();
+        try {
+            WebSocketService.sendMessage(toCommentAuthorId, bean);
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
         }
     }
 }

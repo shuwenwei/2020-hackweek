@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sww.mapper.ArticleCommentMapper">
+    <select id="getCommentById" resultType="articleComment">
+        select
+        ac.author_id authorId
+        , ac.gmt_create gmtCreate,
+        user.username authorUsername
+        from article_comment as ac
+        inner join user
+        on user.id = ac.author_id
+        where ac.id = #{id}
+
+    </select>
+
+</mapper>

@@ -3,7 +3,7 @@ package com.sww.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sww.pojo.Article;
-import com.sww.pojo.packed.PackedArticle;
+import com.sww.pojo.view.PackedArticle;
 import org.apache.ibatis.annotations.Mapper;
 
 

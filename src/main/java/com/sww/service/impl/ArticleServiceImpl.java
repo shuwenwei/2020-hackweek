@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sww.mapper.ArticleMapper;
 import com.sww.pojo.Article;
-import com.sww.pojo.packed.PackedArticle;
+import com.sww.pojo.view.PackedArticle;
 import com.sww.service.ArticleService;
 import org.springframework.stereotype.Service;
 

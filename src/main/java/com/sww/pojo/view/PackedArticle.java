@@ -1,4 +1,4 @@
-package com.sww.pojo.packed;
+package com.sww.pojo.view;
 
 import lombok.Data;
 

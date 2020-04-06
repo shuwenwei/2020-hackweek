@@ -2,7 +2,7 @@ package com.sww.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sww.pojo.Article;
-import com.sww.pojo.packed.PackedArticle;
+import com.sww.pojo.view.PackedArticle;
 
 import java.util.List;
 
