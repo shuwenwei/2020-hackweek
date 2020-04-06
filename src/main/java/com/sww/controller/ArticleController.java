@@ -5,10 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sww.exception.BadRequestException;
-import com.sww.pojo.ResponseBean;
-import com.sww.pojo.Story;
-import com.sww.pojo.Swank;
-import com.sww.pojo.User;
+import com.sww.pojo.*;
+import com.sww.service.StoryCommentService;
 import com.sww.service.StoryService;
 import com.sww.service.SwankService;
 import com.sww.service.UserService;
@@ -35,7 +33,12 @@ public class ArticleController {
     private SwankService swankService;
     private StoryService storyService;
     private UserService userService;
+    private StoryCommentService storyCommentService;
 
+    @Autowired
+    public void setStoryCommentService(StoryCommentService storyCommentService) {
+        this.storyCommentService = storyCommentService;
+    }
 
     @Autowired
     public void setStoryService(StoryService storyService) {
@@ -58,12 +61,9 @@ public class ArticleController {
         BindingResultUtil.checkBinding(bindingResult);
 
         User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
-        if (currentUser.getId().equals(swank.getAuthorId())) {
-            swank.setAuthorId(currentUser.getId());
-            swankService.save(swank);
-            return new ResponseBean("发布成功", null, 1);
-        }
-        throw new BadRequestException("发布失败");
+        swank.setAuthorId(currentUser.getId());
+        swankService.save(swank);
+        return new ResponseBean("发布成功", null, 1);
     }
 
     @PostMapping("/story")
@@ -72,14 +72,12 @@ public class ArticleController {
         BindingResultUtil.checkBinding(bindingResult);
 
         User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
-        if (currentUser.getId().equals(story.getAuthorId())) {
-            story.setAuthorId(currentUser.getId());
-            storyService.save(story);
-            return new ResponseBean("发布成功", null, 1);
-        }
-        throw new BadRequestException("发布失败");
+        story.setId(currentUser.getId());
+        storyService.save(story);
+        return new ResponseBean("发布成功", null, 1);
     }
 
+    /**
     @GetMapping("/story")
     public ResponseBean getStory(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
@@ -89,6 +87,21 @@ public class ArticleController {
                 .page(new Page<Story>().setCurrent(page))
                 .getRecords();
         return new ResponseBean("获取成功", records, 1);
+    }
+    */
+//
+
+    @PostMapping("/story/comment")
+    public ResponseBean postStoryComment(@RequestBody @Validated StoryComment storyComment, BindingResult bindingResult) {
+        BindingResultUtil.checkBinding(bindingResult);
+
+        if (storyService.storyExist(storyComment.getToStory())) {
+            User user = (User) SecurityUtils.getSubject().getPrincipal();
+            storyComment.setAuthorId(user.getId());
+            storyCommentService.save(storyComment);
+            return new ResponseBean("发布成功", null, 1);
+        }
+        throw new BadRequestException("story不存在");
     }
 
 

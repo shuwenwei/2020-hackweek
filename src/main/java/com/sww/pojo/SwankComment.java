@@ -14,9 +14,10 @@ public class SwankComment {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private Long authorId;
+    private Long toSwank;
     private String content;
     private Long toComment;
-    @TableField(fill = FieldFill.INSERT, select = false)
+    @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
     @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
     private Date gmtModified;

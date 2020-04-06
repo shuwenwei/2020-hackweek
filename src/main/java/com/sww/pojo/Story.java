@@ -14,7 +14,7 @@ import java.util.Date;
 @TableName("story")
 public class Story {
     @TableId(type = IdType.ASSIGN_ID)
-    @NotNull(message = "id不能为空")
+    @Null
     private Long id;
     @NotNull(message = "标题不能为空")
     private String title;
@@ -23,11 +23,7 @@ public class Story {
     @NotNull(message = "内容不能为空")
     private String content;
     @Null
-    private Integer likeNum;
-    @Null
-    private Integer starNum;
-    @Null
-    @TableField(fill = FieldFill.INSERT, select = false)
+    @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
     @Null
     @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
