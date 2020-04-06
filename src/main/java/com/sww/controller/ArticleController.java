@@ -1,15 +1,8 @@
 package com.sww.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sww.exception.BadRequestException;
 import com.sww.pojo.*;
-import com.sww.service.StoryCommentService;
-import com.sww.service.StoryService;
-import com.sww.service.SwankService;
-import com.sww.service.UserService;
+import com.sww.service.*;
 import com.sww.util.BindingResultUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -18,8 +11,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Min;
-import java.util.List;
 
 
 /**
@@ -33,7 +24,13 @@ public class ArticleController {
     private SwankService swankService;
     private StoryService storyService;
     private UserService userService;
+    private SwankCommentService swankCommentService;
     private StoryCommentService storyCommentService;
+
+    @Autowired
+    public void setSwankCommentService(SwankCommentService swankCommentService) {
+        this.swankCommentService = swankCommentService;
+    }
 
     @Autowired
     public void setStoryCommentService(StoryCommentService storyCommentService) {
@@ -104,5 +101,17 @@ public class ArticleController {
         throw new BadRequestException("story不存在");
     }
 
+    @PostMapping("/swank/comment")
+    public ResponseBean postSwankComment(@RequestBody @Validated SwankComment swankComment, BindingResult bindingResult) {
+        BindingResultUtil.checkBinding(bindingResult);
+
+        if (swankService.swankExist(swankComment.getToSwank())) {
+            User user = (User) SecurityUtils.getSubject().getPrincipal();
+            swankComment.setAuthorId(user.getId());
+            swankCommentService.save(swankComment);
+            return new ResponseBean("发布成功", null, 1);
+        }
+        throw new BadRequestException("swank不存在");
+    }
 
 }

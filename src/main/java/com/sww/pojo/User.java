@@ -1,12 +1,14 @@
 package com.sww.pojo;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.sww.pojo.group.OnInsertValidateGroup;
 import com.sww.pojo.group.OnUpdateValidateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.Date;
 
 /**
@@ -25,6 +27,7 @@ public class User {
     @NotNull(groups = {OnUpdateValidateGroup.class})
     private String password;
     private String email;
+    @Null
     private String role;
     @TableField(fill = FieldFill.INSERT, select = false)
     private Date gmtCreate;
