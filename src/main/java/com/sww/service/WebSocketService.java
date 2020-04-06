@@ -37,6 +37,10 @@ public class WebSocketService {
         return true;
     }
 
+    public static boolean isUserOnline(String userId) {
+        return services.containsKey(userId);
+    }
+
     @OnOpen
     public void onOpen(Session session) {
         this.session = session;
@@ -61,12 +65,19 @@ public class WebSocketService {
     @OnClose
     public void onClose(Session session) {
         String id = (String) session.getUserProperties().get("userId");
-        services.remove(id, this);
+        services.remove(id);
     }
 
     @OnError
     public void onError(Session session, Throwable error) {
         error.printStackTrace();
+        String id = (String) session.getUserProperties().get("userId");
+        services.remove(id);
+        try {
+            session.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -11,8 +11,8 @@ import java.util.Date;
  * @author sww
  */
 @Data
-@TableName("swank")
-public class Swank {
+@TableName("article")
+public class Article {
     @TableId(type = IdType.ASSIGN_ID)
     @Null
     private Long id;
