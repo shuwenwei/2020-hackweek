@@ -26,10 +26,12 @@ public class User {
     private String password;
     private String email;
     private String role;
-    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT, select = false)
     private Date gmtCreate;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
     private Date gmtModified;
+    @TableField(value = "is_delete", select = false)
+    private Integer delete;
 
 
     public User(String username, String password, String email) {

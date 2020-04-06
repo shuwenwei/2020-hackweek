@@ -1,9 +1,6 @@
 package com.sww.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -19,8 +16,10 @@ public class StoryComment {
     private Long authorId;
     private String content;
     private Long toComment;
+    @TableField(fill = FieldFill.INSERT, select = false)
     private Date gmtCreate;
+    @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
     private Date gmtModified;
-    @TableField(value = "is_delete")
+    @TableField(value = "is_delete", select = false)
     private Integer delete;
 }

@@ -1,4 +1,4 @@
-package com.sww.handler;
+package com.sww.config.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
