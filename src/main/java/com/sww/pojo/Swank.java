@@ -23,7 +23,7 @@ public class Swank {
     private String title;
     @Null
     private Long authorId;
-    @NotNull
+    @NotNull(message = "内容不能为空")
     private String content;
     @Null
     private Integer likeNum;
@@ -33,7 +33,7 @@ public class Swank {
     @TableField
     private Date gmtCreate;
     @Null
-    private Date gmtUpdate;
+    private Date gmtModified;
     @TableField(value = "is_delete")
     @Null
     private Integer delete;

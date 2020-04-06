@@ -20,7 +20,7 @@ public class StoryComment {
     private String content;
     private Long toComment;
     private Date gmtCreate;
-    private Date gmtUpdate;
+    private Date gmtModified;
     @TableField(value = "is_delete")
     private Integer delete;
 }

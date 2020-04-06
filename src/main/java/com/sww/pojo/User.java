@@ -1,15 +1,13 @@
 package com.sww.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.sww.pojo.group.OnUpdateValidateGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * @author sww
@@ -28,6 +26,11 @@ public class User {
     private String password;
     private String email;
     private String role;
+    @TableField(fill = FieldFill.INSERT)
+    private Date gmtCreate;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date gmtModified;
+
 
     public User(String username, String password, String email) {
         this.username = username;

@@ -17,18 +17,23 @@ import java.util.Date;
 @TableName("story")
 public class Story {
     @TableId(type = IdType.ASSIGN_ID)
-    @NotNull
+    @NotNull(message = "id不能为空")
     private Long id;
-    @NotNull
+    @NotNull(message = "标题不能为空")
     private String title;
     @Null
     private Long authorId;
-    @NotNull
+    @NotNull(message = "内容不能为空")
     private String content;
+    @Null
     private Integer likeNum;
+    @Null
     private Integer starNum;
+    @Null
     private Date gmtCreate;
-    private Date gmtUpdate;
+    @Null
+    private Date gmtModified;
     @TableField(value = "is_delete")
+    @Null
     private Integer delete;
 }

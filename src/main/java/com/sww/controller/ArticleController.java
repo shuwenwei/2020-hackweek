@@ -1,5 +1,9 @@
 package com.sww.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sww.exception.BadRequestException;
 import com.sww.pojo.ResponseBean;
 import com.sww.pojo.Story;
@@ -14,9 +18,10 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Min;
+import java.util.List;
 
 
 /**
@@ -24,7 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiresRoles("user")
-public class PublishController {
+@RequestMapping("/article")
+public class ArticleController {
 
     private SwankService swankService;
     private StoryService storyService;
@@ -46,7 +52,7 @@ public class PublishController {
         this.swankService = swankService;
     }
 
-    @PostMapping("/article/swank")
+    @PostMapping("/swank")
     public ResponseBean postSwank(@RequestBody @Validated Swank swank
             , BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
@@ -60,7 +66,7 @@ public class PublishController {
         throw new BadRequestException("发布失败");
     }
 
-    @PostMapping("/article/story")
+    @PostMapping("/story")
     public ResponseBean postStory(@RequestBody @Validated Story story
             , BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
@@ -73,5 +79,17 @@ public class PublishController {
         }
         throw new BadRequestException("发布失败");
     }
+
+    @GetMapping("/story")
+    public ResponseBean getStory(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
+        BindingResultUtil.checkBinding(bindingResult);
+
+        QueryWrapper<Story> wrapper = new QueryWrapper<>();
+        List<Story> records = storyService
+                .page(new Page<Story>().setCurrent(page))
+                .getRecords();
+        return new ResponseBean("获取成功", records, 1);
+    }
+
 
 }
