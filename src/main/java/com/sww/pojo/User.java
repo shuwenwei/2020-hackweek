@@ -35,6 +35,7 @@ public class User {
     @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
     @Null
     private Date gmtModified;
+    @TableLogic
     @TableField(value = "is_delete", select = false, fill = FieldFill.INSERT)
     @Null
     private Integer delete;

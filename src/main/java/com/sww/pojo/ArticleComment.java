@@ -29,5 +29,6 @@ public class ArticleComment {
     @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
     private Date gmtModified;
     @TableField(value = "is_delete", select = false, fill = FieldFill.INSERT)
+    @TableLogic
     private Integer delete;
 }

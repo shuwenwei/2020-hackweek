@@ -60,6 +60,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/**.ico","anon");
         filterChainDefinitionMap.put("/api/token/**","myJwtFilter");
         filterChainDefinitionMap.put("/article/**","myJwtFilter");
+        filterChainDefinitionMap.put("/self/**","myJwtFilter");
         bean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         return bean;

@@ -37,5 +37,6 @@ public class Article {
     private Date gmtModified;
     @TableField(value = "is_delete", select = false, fill = FieldFill.INSERT)
     @Null
+    @TableLogic
     private Integer delete;
 }
