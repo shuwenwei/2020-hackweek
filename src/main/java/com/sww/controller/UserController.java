@@ -1,6 +1,5 @@
 package com.sww.controller;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.sww.exception.BadRequestException;
 import com.sww.pojo.RegisterUser;
 import com.sww.pojo.ResponseBean;
@@ -19,10 +18,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 
 
 /**
+ * 已经全部测试过
  * @author sww
  */
 
@@ -97,7 +96,7 @@ public class UserController {
         if (success) {
             String password = PasswordUtil.generate(registerUser.getPassword());
             User user = new User(username, password, email);
-            userService.save(user);
+            userService.addUser(user);
             return new ResponseBean("注册成功", null, 1);
         }
         throw new BadRequestException("注册失败");

@@ -1,5 +1,6 @@
 package com.sww.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sww.pojo.Article;
 import com.sww.pojo.view.PackedArticle;
@@ -24,5 +25,5 @@ public interface ArticleService extends IService<Article> {
      * @param articleType 0:swank 1:story
      * @return article list
      */
-    public List<PackedArticle> getArticles(int page, int articleType);
+    public List<PackedArticle> getArticles(Page<PackedArticle> page, int articleType);
 }

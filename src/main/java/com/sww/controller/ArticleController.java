@@ -1,6 +1,7 @@
 package com.sww.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sww.exception.BadRequestException;
 import com.sww.pojo.*;
 import com.sww.pojo.view.PackedArticle;
@@ -17,6 +18,7 @@ import javax.validation.constraints.Min;
 import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -59,18 +61,18 @@ public class ArticleController {
     }
 
     @GetMapping("/swank")
-    public ResponseBean getSwanks(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
-        BindingResultUtil.checkBinding(bindingResult);
+    public ResponseBean getSwanks(@RequestParam @Min(value = 1) int page) {
 
-        List<PackedArticle> swanks = articleService.getArticles(page, 0);
+        Page<PackedArticle> pageObj = new Page<PackedArticle>().setCurrent(page);
+        List<PackedArticle> swanks = articleService.getArticles(pageObj, 0);
         return new ResponseBean("获取成功", swanks, 1);
     }
 
     @GetMapping("/story")
-    public ResponseBean getStories(@RequestParam @Min(value = 1) int page, BindingResult bindingResult) {
-        BindingResultUtil.checkBinding(bindingResult);
+    public ResponseBean getStories(@RequestParam @Min(value = 1) int page) {
 
-        List<PackedArticle> stories = articleService.getArticles(page, 1);
+        Page<PackedArticle> pageObj = new Page<PackedArticle>().setCurrent(page);
+        List<PackedArticle> stories = articleService.getArticles(pageObj, 1);
         return new ResponseBean("获取成功", stories, 1);
     }
 
@@ -101,23 +103,32 @@ public class ArticleController {
     private void sendMessageToWebsocket(ArticleComment articleComment) {
         String articleAuthorId = articleComment.getAuthorId().toString();
         WebSocketResponseBean bean = new WebSocketResponseBean("comment", "收到一条新回复", articleComment.getContent());
-        //给文章作者发送
-        try {
-            WebSocketService.sendMessage(articleAuthorId, bean);
-        } catch (IOException | EncodeException e) {
-            e.printStackTrace();
+//        给文章作者发送
+        String articleCommentAuthorId = articleComment.getAuthorId().toString();
+//        如果文章作者和回复人相同则不推送
+        if (articleAuthorId.equals(articleCommentAuthorId)) {
+            try {
+                WebSocketService.sendMessage(articleAuthorId, bean);
+            } catch (IOException | EncodeException e) {
+                e.printStackTrace();
+            }
         }
 
         Long toComment = articleComment.getToComment();
         if (toComment == null) {
             return;
         }
-        //给该条评论的作者推送
+//        给该条评论的作者推送
         String toCommentAuthorId = articleCommentService
                 .getOne(new QueryWrapper<ArticleComment>()
                         .eq("id", toComment))
                 .getAuthorId()
                 .toString();
+//        如果被回复的评论作者与发表回复的作者相同
+        if (articleCommentAuthorId.equals(toCommentAuthorId)) {
+            return;
+        }
+
         try {
             WebSocketService.sendMessage(toCommentAuthorId, bean);
         } catch (IOException | EncodeException e) {

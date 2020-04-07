@@ -8,7 +8,7 @@
         from article
         inner join user_info
         on
-        user_info.user_id = article.author_id
+        article.author_id = user_info.user_id
         inner join user
         on
         user.id = article.author_id

@@ -1,14 +1,15 @@
 package com.sww.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sww.mapper.ArticleMapper;
 import com.sww.pojo.Article;
 import com.sww.pojo.view.PackedArticle;
 import com.sww.service.ArticleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -19,8 +20,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     private ArticleMapper articleMapper;
 
-    @Resource
-    public void setStoryMapper(ArticleMapper articleMapper) {
+    @Autowired
+    public void setArticleMapper(ArticleMapper articleMapper) {
         this.articleMapper = articleMapper;
     }
 
@@ -30,10 +31,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public List<PackedArticle> getArticles(int page, int articleType) {
+    public List<PackedArticle> getArticles(Page<PackedArticle> page, int articleType) {
         return articleMapper
-                .getArticles(articleType)
-                .setPages(page)
+                .getArticles(page, articleType)
                 .getRecords();
     }
 }
