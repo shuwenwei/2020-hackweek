@@ -18,7 +18,6 @@ import javax.validation.constraints.Min;
 import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 
 /**

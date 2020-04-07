@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author sww
@@ -32,7 +33,7 @@ public class UserPageController {
     private UserInfoService userInfoService;
     private ArticleService articleService;
     private QiniuUtil qiniuUtil;
-    private static final String urlPrefix = "http://q89jpbw7d.bkt.clouddn.com/";
+    private static final String URL_PREFIX = "http://q89jpbw7d.bkt.clouddn.com/";
 
     @SuppressWarnings("SpellCheckingInspection")
     @Autowired
@@ -95,12 +96,12 @@ public class UserPageController {
         if (url.length() < 1) {
             throw new BadRequestException("上传失败");
         }
-        url = urlPrefix + url;
+        url = URL_PREFIX + url;
 
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         System.out.println(user == null);
         UserInfo userInfo = new UserInfo();
-        Long userId = user.getId();
+        Long userId = Objects.requireNonNull(user).getId();
         userInfo.setUserId(userId);
         userInfo.setAvatarUrl(url);
         userInfoService
