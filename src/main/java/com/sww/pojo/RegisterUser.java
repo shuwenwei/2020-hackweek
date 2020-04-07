@@ -13,13 +13,13 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class RegisterUser {
-    @NotNull(groups = {OnInsertValidateGroup.class}, message = "用户名不能为空")
+    @NotNull(groups = {OnInsertValidateGroup.class, OnUpdateValidateGroup.class}, message = "用户名不能为空")
     private String username;
-    @NotNull(groups = {OnInsertValidateGroup.class}, message = "密码不能为空")
+    @NotNull(groups = {OnInsertValidateGroup.class, OnUpdateValidateGroup.class}, message = "密码不能为空")
     private String password;
-    @NotNull(groups = {OnInsertValidateGroup.class, OnUpdateValidateGroup.class}, message = "邮箱不能为空")
+    @NotNull(groups = {OnInsertValidateGroup.class}, message = "邮箱不能为空")
     private String email;
-    @NotNull
-    @Length(min = 6, max = 6, message = "验证码为6位")
+    @NotNull(groups = {OnInsertValidateGroup.class, OnUpdateValidateGroup.class})
+    @Length(min = 6, max = 6, message = "验证码为6位", groups = {OnInsertValidateGroup.class, OnUpdateValidateGroup.class})
     private String code;
 }

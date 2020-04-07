@@ -15,16 +15,9 @@ import javax.annotation.Resource;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    private UserMapper userMapper;
-
-    @Resource
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
     @Override
     public User findUserByUsername(String username) {
-        return userMapper
+        return baseMapper
                 .selectOne(new QueryWrapper<User>()
                         .eq("username", username));
     }
@@ -36,7 +29,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean checkEmail(String email) {
-        return userMapper
+        return baseMapper
                 .selectOne(new QueryWrapper<User>()
                         .eq("email", email)) != null;
     }

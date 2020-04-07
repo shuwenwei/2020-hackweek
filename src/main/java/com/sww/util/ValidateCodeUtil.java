@@ -29,7 +29,7 @@ public class ValidateCodeUtil {
         ValidateCodeUtil.redisUtil = redisUtil;
     }
 
-    @Resource
+    @Autowired
     public void setJavaMailSender(JavaMailSender javaMailSender) {
         ValidateCodeUtil.javaMailSender = javaMailSender;
     }
@@ -49,6 +49,7 @@ public class ValidateCodeUtil {
      * @return
      */
     public static void sendMessage(String subject, String to) {
+        System.out.println(javaMailSender == null);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setSubject(subject);
         message.setTo(to);

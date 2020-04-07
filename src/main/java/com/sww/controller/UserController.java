@@ -5,6 +5,7 @@ import com.sww.exception.BadRequestException;
 import com.sww.pojo.RegisterUser;
 import com.sww.pojo.ResponseBean;
 import com.sww.pojo.User;
+import com.sww.pojo.group.OnExtraConditionGroup;
 import com.sww.pojo.group.OnInsertValidateGroup;
 import com.sww.pojo.group.OnUpdateValidateGroup;
 import com.sww.service.AsyncService;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 
 /**
@@ -40,8 +43,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * @param user username password
+     */
     @PostMapping("/token")
-    public ResponseBean login(@RequestBody User user, BindingResult bindingResult) {
+    public ResponseBean login(@RequestBody @Validated(OnInsertValidateGroup.class) User user
+            , BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
         String reqUsername = user.getUsername();
@@ -53,8 +60,13 @@ public class UserController {
         throw new BadRequestException("用户名或密码错误");
     }
 
+
+    /**
+     * @param user  需要username和email
+     */
     @PostMapping("/email")
-    public ResponseBean sendRegisterEmail(@RequestBody User user, BindingResult bindingResult) {
+    public ResponseBean sendRegisterEmail(@RequestBody @Validated(OnExtraConditionGroup.class) User user
+            , BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
         String email = user.getEmail();
@@ -66,6 +78,9 @@ public class UserController {
         throw new BadRequestException("用户名或邮箱已存在");
     }
 
+    /**
+     * @param registerUser 需要username password email 验证码
+     */
     @PostMapping("/register")
     public ResponseBean checkAndRegister(@RequestBody @Validated(value = OnInsertValidateGroup.class)
             RegisterUser registerUser , BindingResult bindingResult) {
@@ -88,8 +103,9 @@ public class UserController {
         throw new BadRequestException("注册失败");
     }
 
-    @GetMapping("/forget/{username}")
-    public ResponseBean forgetPassword(@PathVariable String username) {
+    @GetMapping("/forget")
+    public ResponseBean forgetPassword(@RequestParam String username) {
+        System.out.println(username);
         User dbUser = userService.findUserByUsername(username);
         if (dbUser == null) {
             throw new BadRequestException("用户名不存在");
@@ -103,18 +119,23 @@ public class UserController {
         return new ResponseBean(msg, null, 1);
     }
 
+    /**
+     * @param registerUser 需要username password 和 验证码
+     */
     @PutMapping("/forget")
     public ResponseBean checkAndModify(@RequestBody @Validated(value = OnUpdateValidateGroup.class)
           RegisterUser registerUser, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
+        System.out.println(registerUser);
         String username = registerUser.getUsername();
         User dbUser = userService.findUserByUsername(username);
-        String email = registerUser.getEmail();
+        String email = dbUser.getEmail();
         if (ValidateCodeUtil.checkValidateCode(email, registerUser.getCode())) {
             String generatedPassword = PasswordUtil.generate(registerUser.getPassword());
             dbUser.setPassword(generatedPassword);
-            userService.update(new UpdateWrapper<>(dbUser));
+            System.out.println(dbUser);
+            userService.updateById(dbUser);
             return new ResponseBean("修改成功", null, 1);
         }
         throw new BadRequestException("修改失败");

@@ -18,4 +18,5 @@ public interface ArticleMapper extends BaseMapper<Article> {
      * @return story list
      */
     public IPage<PackedArticle> getArticles(int articleType);
+
 }
