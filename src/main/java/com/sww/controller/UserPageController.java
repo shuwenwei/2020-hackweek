@@ -51,7 +51,7 @@ public class UserPageController {
     public ResponseBean getUserInfo(@PathVariable Long userId, @RequestParam @Min(1) int page) {
         UserInfo userInfo = userInfoService.getUserInfo(userId);
         if (userInfo == null) {
-            throw new BadRequestException("用户不存在");
+            throw new BadRequestException("用户信息为空或用户不存在");
         }
         Page<Article> articlePage = new Page<>();
         articlePage.setCurrent(page);

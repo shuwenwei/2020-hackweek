@@ -35,7 +35,7 @@ public class Article {
     @Null
     @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
     private Date gmtModified;
-    @TableField(value = "is_delete", select = false)
+    @TableField(value = "is_delete", select = false, fill = FieldFill.INSERT)
     @Null
     private Integer delete;
 }

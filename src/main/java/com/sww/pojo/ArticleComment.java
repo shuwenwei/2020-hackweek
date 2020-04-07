@@ -20,7 +20,7 @@ public class ArticleComment {
     @Null
     private Long authorId;
     @NotNull(message = "articleId不能为空")
-    private Long toStory;
+    private Long toArticle;
     @NotEmpty(message = "内容不能为空")
     private String content;
     private Long toComment;
@@ -28,6 +28,6 @@ public class ArticleComment {
     private Date gmtCreate;
     @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
     private Date gmtModified;
-    @TableField(value = "is_delete", select = false)
+    @TableField(value = "is_delete", select = false, fill = FieldFill.INSERT)
     private Integer delete;
 }

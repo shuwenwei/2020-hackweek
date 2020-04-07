@@ -14,7 +14,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Null;
 import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.List;
@@ -79,7 +78,7 @@ public class ArticleController {
     public ResponseBean postComment(@RequestBody @Validated ArticleComment articleComment, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 
-        if (articleService.articleExist(articleComment.getToStory())) {
+        if (articleService.articleExist(articleComment.getToArticle())) {
             User user = (User) SecurityUtils.getSubject().getPrincipal();
             Long userId = user.getId();
             articleComment.setAuthorId(userId);
@@ -94,7 +93,7 @@ public class ArticleController {
 
     private void saveArticle(Article article, int type) {
         User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
-        article.setId(currentUser.getId());
+        article.setAuthorId(currentUser.getId());
         article.setArticleType(type);
         articleService.save(article);
     }
@@ -116,7 +115,7 @@ public class ArticleController {
         //给该条评论的作者推送
         String toCommentAuthorId = articleCommentService
                 .getOne(new QueryWrapper<ArticleComment>()
-                        .eq("to_comment", toComment))
+                        .eq("id", toComment))
                 .getAuthorId()
                 .toString();
         try {

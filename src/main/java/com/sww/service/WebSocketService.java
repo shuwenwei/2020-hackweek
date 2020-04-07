@@ -33,7 +33,7 @@ public class WebSocketService {
         services.get(target)
                 .getSession()
                 .getBasicRemote()
-                .sendObject(message);
+                .sendText(JSON.toJSONString(message));
         return true;
     }
 
