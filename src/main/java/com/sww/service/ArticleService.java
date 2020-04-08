@@ -26,4 +26,11 @@ public interface ArticleService extends IService<Article> {
      * @return article list
      */
     public List<PackedArticle> getArticles(Page<PackedArticle> page, int articleType);
+
+    /**
+     * 获取单篇文章
+     * @param id 文章id
+     * @return 文章对象
+     */
+    public PackedArticle getArticle(Long id);
 }

@@ -36,4 +36,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .getArticles(page, articleType)
                 .getRecords();
     }
+
+    @Override
+    public PackedArticle getArticle(Long id) {
+        return articleMapper.getArticle(id);
+    }
 }

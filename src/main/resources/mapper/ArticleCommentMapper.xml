@@ -15,4 +15,21 @@
 
     </select>
 
+    <select id="getCommentsByArticleId" resultType="com.sww.pojo.view.ViewComment">
+        select
+        ac.author_id authorId,
+        ac.gmt_create gmtCreate,
+        ac.content content,
+        user.username authorUsername,
+        user_info.avatar_url avatarUrl
+        from article_comment as ac
+        inner join user_info
+        on user_info.user_id = author_id
+        inner join user
+        on user.id = ac.author_id
+        where ac.to_article = #{articleId}
+        and ac.is_delete = 0
+        order by ac.gmt_create
+    </select>
+
 </mapper>

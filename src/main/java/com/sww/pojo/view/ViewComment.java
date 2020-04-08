@@ -10,6 +10,7 @@ import java.util.Date;
  */
 @Data
 public class ViewComment {
+    private Long authorId;
     private String authorUsername;
     private String content;
     private String avatarUrl;

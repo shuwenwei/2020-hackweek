@@ -1,7 +1,12 @@
 package com.sww.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sww.pojo.ArticleComment;
+import com.sww.pojo.view.ViewComment;
+
+import java.util.List;
 
 /**
  * @author sww
@@ -14,4 +19,12 @@ public interface ArticleCommentService extends IService<ArticleComment> {
      * @return 回复内容
      */
     public ArticleComment getCommentById(Long id);
+
+    /**
+     * 通过文章id查找评论
+     * @param page page
+     * @param articleId 文章id
+     * @return 评论
+     */
+    public List<ViewComment> getCommentsByArticleId(Page<ViewComment> page, Long articleId);
 }

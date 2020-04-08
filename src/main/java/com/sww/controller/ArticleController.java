@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sww.exception.BadRequestException;
 import com.sww.pojo.*;
 import com.sww.pojo.view.PackedArticle;
+import com.sww.pojo.view.ViewComment;
 import com.sww.service.*;
 import com.sww.util.BindingResultUtil;
 import org.apache.shiro.SecurityUtils;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Min;
 import javax.websocket.EncodeException;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -41,6 +43,37 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
+    /**
+     * 获取文章
+     * @param id 文章id
+     * @param page 评论的页数
+     */
+    @GetMapping("/article/{id}")
+    public ResponseBean getArticle(@PathVariable Long id, @RequestParam("page") int page) {
+        PackedArticle article = articleService.getArticle(id);
+        if (article == null) {
+            throw new BadRequestException("文章不存在");
+        }
+        System.out.println(article);
+        LinkedHashMap<String, Object> articleAndComment = new LinkedHashMap<>(4);
+        //获得文章信息
+        if (page == 1) {
+            articleAndComment.put("article", article);
+        }
+        //获得回复信息
+        Page<ViewComment> viewCommentPage = new Page<ViewComment>()
+                .setCurrent(page)
+                .setSize(30);
+        List<ViewComment> comments = articleCommentService
+                .getCommentsByArticleId(viewCommentPage, id);
+        articleAndComment.put("comments", comments);
+
+        return new ResponseBean("获取成功", articleAndComment, 1);
+    }
+
+    /**
+     * 已测试
+     */
     @PostMapping("/swank")
     public ResponseBean postSwank(@RequestBody @Validated Article article
             , BindingResult bindingResult) {
@@ -50,6 +83,9 @@ public class ArticleController {
         return new ResponseBean("发布成功", null, 1);
     }
 
+    /**
+     * 已测试
+     */
     @PostMapping("/story")
     public ResponseBean postStory(@RequestBody @Validated Article article
             , BindingResult bindingResult) {
@@ -59,6 +95,9 @@ public class ArticleController {
         return new ResponseBean("发布成功", null, 1);
     }
 
+    /**
+     * 已测试
+     */
     @GetMapping("/swank")
     public ResponseBean getSwanks(@RequestParam @Min(value = 1) int page) {
 
@@ -67,6 +106,9 @@ public class ArticleController {
         return new ResponseBean("获取成功", swanks, 1);
     }
 
+    /**
+     * 已测试
+     */
     @GetMapping("/story")
     public ResponseBean getStories(@RequestParam @Min(value = 1) int page) {
 
@@ -75,6 +117,9 @@ public class ArticleController {
         return new ResponseBean("获取成功", stories, 1);
     }
 
+    /**
+     * 已测试
+     */
     @PostMapping("/comment")
     public ResponseBean postComment(@RequestBody @Validated ArticleComment articleComment, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
@@ -91,6 +136,12 @@ public class ArticleController {
         }
         throw new BadRequestException("文章不存在");
     }
+
+    @PostMapping("/comment/inner")
+    public ResponseBean postInnerComment() {
+
+    }
+
 
     private void saveArticle(Article article, int type) {
         User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
@@ -113,25 +164,25 @@ public class ArticleController {
             }
         }
 
-        Long toComment = articleComment.getToComment();
-        if (toComment == null) {
-            return;
-        }
+//        Long toComment = articleComment.getToComment();
+//        if (toComment == null) {
+//            return;
+//        }
 //        给该条评论的作者推送
-        String toCommentAuthorId = articleCommentService
-                .getOne(new QueryWrapper<ArticleComment>()
-                        .eq("id", toComment))
-                .getAuthorId()
-                .toString();
+//        String toCommentAuthorId = articleCommentService
+//                .getOne(new QueryWrapper<ArticleComment>()
+//                        .eq("id", toComment))
+//                .getAuthorId()
+//                .toString();
 //        如果被回复的评论作者与发表回复的作者相同
-        if (articleCommentAuthorId.equals(toCommentAuthorId)) {
-            return;
-        }
-
-        try {
-            WebSocketService.sendMessage(toCommentAuthorId, bean);
-        } catch (IOException | EncodeException e) {
-            e.printStackTrace();
-        }
+//        if (articleCommentAuthorId.equals(toCommentAuthorId)) {
+//            return;
+//        }
+//
+//        try {
+//            WebSocketService.sendMessage(toCommentAuthorId, bean);
+//        } catch (IOException | EncodeException e) {
+//            e.printStackTrace();
+//        }
     }
 }
