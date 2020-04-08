@@ -57,6 +57,7 @@ public class UserPageController {
     }
 
     /**
+     * 已测试
      * 获取个人资料
      */
     @GetMapping("/self/main")
@@ -76,6 +77,7 @@ public class UserPageController {
     }
 
     /**
+     * 已测试
      * 修改用户的个人信息 需要introduction和birth
      */
     @PutMapping("/self/modify")
@@ -89,9 +91,12 @@ public class UserPageController {
         Long userId = user.getId();
         userInfo.setUserId(userId);
 
+//        boolean update = userInfoService
+//                .update(userInfo, new UpdateWrapper<UserInfo>()
+//                        .eq("user_id", userId));
         boolean update = userInfoService
-                .update(userInfo, new UpdateWrapper<UserInfo>()
-                        .eq("user_id", userId));
+                .updateUserInfo(userInfo, new UpdateWrapper<UserInfo>().
+                        eq("user_id", userId));
         if (!update) {
             throw new BadRequestException("更新失败");
         }

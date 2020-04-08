@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import javax.validation.constraints.Null;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Date;
  */
 @TableName("user_info")
 @Data
-public class UserInfo {
+public class UserInfo implements Serializable {
     @TableId(type = IdType.ASSIGN_ID)
     @Null
     private Long id;
@@ -20,10 +21,13 @@ public class UserInfo {
     @Null
     private String avatarUrl;
     @Null
+    @TableField(select = false)
     private Integer followNum;
     @Null
+    @TableField(select = false)
     private Integer followedNum;
     @Null
+    @TableField(select = false)
     private Integer likedNum;
     private Date birth;
     private String introduction;
