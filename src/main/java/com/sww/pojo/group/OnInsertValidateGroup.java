@@ -1,11 +1,9 @@
 package com.sww.pojo.group;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import javax.validation.groups.Default;
 
 /**
  * @author sww
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface OnInsertValidateGroup {
+public interface OnInsertValidateGroup extends Default {
 }

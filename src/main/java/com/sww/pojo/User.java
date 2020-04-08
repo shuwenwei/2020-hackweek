@@ -18,6 +18,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class User {
     @TableId(type = IdType.ASSIGN_ID)
+    @Null
     private Long id;
     @TableField(value = "username")
     @NotNull(groups = {OnExtraConditionGroup.class, OnInsertValidateGroup.class}, message = "username不能为空")
