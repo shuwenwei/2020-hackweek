@@ -35,7 +35,6 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(jsonRedisSerializer);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-//        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
 
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();

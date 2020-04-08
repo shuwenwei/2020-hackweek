@@ -11,18 +11,17 @@ import com.sww.pojo.UserInfo;
 import com.sww.service.ArticleService;
 import com.sww.service.UserInfoService;
 import com.sww.util.QiniuUtil;
+import com.sww.util.RedisUtil;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Min;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author sww
@@ -33,12 +32,18 @@ public class UserPageController {
     private UserInfoService userInfoService;
     private ArticleService articleService;
     private QiniuUtil qiniuUtil;
+    private RedisUtil redisUtil;
     private static final String URL_PREFIX = "http://q89jpbw7d.bkt.clouddn.com/";
 
     @SuppressWarnings("SpellCheckingInspection")
     @Autowired
     public void setQiniuUtil(QiniuUtil qiniuUtil) {
         this.qiniuUtil = qiniuUtil;
+    }
+
+    @Autowired
+    public void setRedisUtil(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
     }
 
     @Autowired
@@ -51,13 +56,52 @@ public class UserPageController {
         this.userInfoService = userInfoService;
     }
 
-    @GetMapping("/self/modify")
+    /**
+     * 获取个人资料
+     */
+    @GetMapping("/self/main")
     public ResponseBean getSelfPage() {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         UserInfo userInfo = userInfoService.getUserInfo(user.getId());
+
+        Long userId = user.getId();
+        Integer followed = redisUtil.getFollowedNum(userId);
+        Integer liked = redisUtil.getLikedNum(userId);
+        Integer follow = redisUtil.getFollowNum(userId);
+        userInfo.setFollowNum(follow);
+        userInfo.setLikedNum(liked);
+        userInfo.setFollowedNum(followed);
+
         return new ResponseBean("获取成功", userInfo, 1);
     }
 
+    /**
+     * 修改用户的个人信息 需要introduction和birth
+     */
+    @PutMapping("/self/modify")
+    public ResponseBean updateSelfInfo(@RequestBody @Validated UserInfo userInfo) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        Date birth = userInfo.getBirth();
+        String introduction = userInfo.getIntroduction();
+        if (birth == null && introduction == null) {
+            throw new BadRequestException("缺少需要更新的信息");
+        }
+        Long userId = user.getId();
+        userInfo.setUserId(userId);
+
+        boolean update = userInfoService
+                .update(userInfo, new UpdateWrapper<UserInfo>()
+                        .eq("user_id", userId));
+        if (!update) {
+            throw new BadRequestException("更新失败");
+        }
+
+        return new ResponseBean("更新成功", null, 1);
+    }
+
+    /**
+     * 查看某人的个人信息
+     */
     @GetMapping("/self/{userId}")
     public ResponseBean getUserInfo(@PathVariable Long userId, @RequestParam @Min(1) int page) {
         UserInfo userInfo = userInfoService.getUserInfo(userId);
@@ -82,6 +126,7 @@ public class UserPageController {
     }
 
     /**
+     * 已测试
      * 上传用户头像
      * @param avatar 用户头像
      */

@@ -23,6 +23,22 @@ public class RedisUtil {
         this.redisTemplate = redisTemplate;
     }
 
+    public Integer getLikedNum(Long userId) {
+        String key = "liked::" + userId.toString();
+        return hasKey(key)? (Integer) get(key) : 0;
+    }
+
+    public Integer getFollowedNum(Long userId) {
+        String key = "followed::" + userId.toString();
+        return hasKey(key)? (Integer) get(key) : 0;
+    }
+
+    public Integer getFollowNum(Long userId) {
+        String key = "follow::" + userId.toString();
+        return hasKey(key)? (Integer) get(key) : 0;
+    }
+
+
     /**
      * 指定缓存失效时间
      *

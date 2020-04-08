@@ -1,16 +1,25 @@
 package com.sww;
 
+import com.sww.util.RedisUtil;
 import com.sww.util.ValidateCodeUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.event.annotation.PrepareTestInstance;
 
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class MyTest1 {
+
+    private RedisUtil redisUtil;
+
+    @Autowired
+    public void setRedisUtil(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     @Test
     public void test1() {
-        ValidateCodeUtil.sendMessage("aaa", "13979062948@163.com");
+
     }
 }
