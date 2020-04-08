@@ -15,7 +15,7 @@ public class InnerComment {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     @Null
-    private Long authorId;
+    private Long userId;
     @NotNull(message = "内容不能为空")
     private String content;
     @NotNull(message = "toComment不能为空")
@@ -29,5 +29,5 @@ public class InnerComment {
     @TableLogic
     @Null
     @TableField(fill = FieldFill.INSERT, select = false, value = "is_delete")
-    private boolean delete;
+    private Boolean delete;
 }

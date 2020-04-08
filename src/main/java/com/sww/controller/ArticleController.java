@@ -16,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -31,7 +33,19 @@ import java.util.List;
 public class ArticleController {
 
     private ArticleService articleService;
+    private UserService userService;
     private ArticleCommentService articleCommentService;
+    private InnerCommentService innerCommentService;
+
+    @Autowired
+    public void setInnerCommentService(InnerCommentService innerCommentService) {
+        this.innerCommentService = innerCommentService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setArticleCommentService(ArticleCommentService articleCommentService) {
@@ -130,7 +144,7 @@ public class ArticleController {
             articleComment.setAuthorId(userId);
             articleCommentService.save(articleComment);
 
-            sendMessageToWebsocket(articleComment);
+            sendMessageToArticleAuthor(articleComment);
 
             return new ResponseBean("发布成功", null, 1);
         }
@@ -138,10 +152,35 @@ public class ArticleController {
     }
 
     @PostMapping("/comment/inner")
-    public ResponseBean postInnerComment() {
+    public ResponseBean postInnerComment(@RequestBody @Validated InnerComment innerComment, BindingResult bindingResult) {
+        System.out.println(innerComment);
+        BindingResultUtil.checkBinding(bindingResult);
 
+        User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
+        Long userId = currentUser.getId();
+        innerComment.setUserId(userId);
+
+        Long toCommentId = innerComment.getToComment();
+        ArticleComment comment = articleCommentService.getById(toCommentId);
+        if (comment == null) {
+            throw new BadRequestException("回复的评论不存在");
+        }
+
+        sendMessageToArticleAuthor(comment);
+
+        innerCommentService.save(innerComment);
+        return new ResponseBean("发送成功", null, 1);
     }
 
+    private void sendMessageToCommentAuthor(InnerComment innerComment, ArticleComment toComment) {
+        String toCommentUserId = toComment.getAuthorId().toString();
+        WebSocketResponseBean bean = new WebSocketResponseBean("comment", "收到一条新回复", innerComment.getContent());
+        try {
+            WebSocketService.sendMessage(toCommentUserId, bean);
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void saveArticle(Article article, int type) {
         User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
@@ -150,7 +189,7 @@ public class ArticleController {
         articleService.save(article);
     }
 
-    private void sendMessageToWebsocket(ArticleComment articleComment) {
+    private void sendMessageToArticleAuthor(ArticleComment articleComment) {
         String articleAuthorId = articleComment.getAuthorId().toString();
         WebSocketResponseBean bean = new WebSocketResponseBean("comment", "收到一条新回复", articleComment.getContent());
 //        给文章作者发送

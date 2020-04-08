@@ -15,21 +15,69 @@
 
     </select>
 
-    <select id="getCommentsByArticleId" resultType="com.sww.pojo.view.ViewComment">
+<!--    <select id="getCommentsByArticleId" resultType="com.sww.pojo.view.ViewComment">-->
+<!--        select-->
+<!--        ac.author_id authorId,-->
+<!--        ac.gmt_create gmtCreate,-->
+<!--        ac.content content,-->
+<!--        user.username authorUsername,-->
+<!--        user_info.avatar_url avatarUrl-->
+<!--        from article_comment as ac-->
+<!--        inner join user_info-->
+<!--        on user_info.user_id = author_id-->
+<!--        inner join user-->
+<!--        on user.id = ac.author_id-->
+<!--        where ac.to_article = #{articleId}-->
+<!--        and ac.is_delete = 0-->
+<!--        order by ac.gmt_create-->
+<!--    </select>-->
+
+    <select id="getCommentsByArticleId" resultMap="getComments">
         select
-        ac.author_id authorId,
-        ac.gmt_create gmtCreate,
+        ac.author_id author_id,
         ac.content content,
-        user.username authorUsername,
-        user_info.avatar_url avatarUrl
+        ac.id comment_id,
+        user.username author_username,
+        user_info.avatar_url avatar,
+        ac.gmt_create gmt
         from article_comment as ac
         inner join user_info
-        on user_info.user_id = author_id
+        on user_info.user_id = ac.author_id
         inner join user
         on user.id = ac.author_id
         where ac.to_article = #{articleId}
         and ac.is_delete = 0
-        order by ac.gmt_create
     </select>
 
+    <resultMap id="getComments" type="com.sww.pojo.view.ViewComment">
+        <result property="authorId" column="author_id"/>
+        <result property="commentId" column="comment_id"/>
+        <result property="authorUsername" column="author_username"/>
+        <result property="content" column="content"/>
+        <result property="avatarUrl" column="avatar"/>
+        <result property="gmtCreate" column="gmt"/>
+        <collection property="innerComments" javaType="list" column="comment_id" select="getInnerComments" ofType="com.sww.pojo.view.ViewInnerComment"/>
+<!--        <collection property="innerComments" ofType="com.sww.pojo.view.ViewInnerComment" select="getInnerComments" column="comment_id">-->
+<!--            <result property="authorUserId" column="inner_author_id"/>-->
+<!--            <result property="authorUsername" column="inner_author_username"/>-->
+<!--            <result property="content" column="inner_content"/>-->
+<!--            <result property="innerAuthorAvatarUrl" column="inner_avatar"/>-->
+<!--            <result property="gmtCreate" column="inner_gmt"/>-->
+<!--        </collection>-->
+    </resultMap>
+
+    <select id="getInnerComments" resultType="com.sww.pojo.view.ViewInnerComment">
+        select
+        ic.user_id authorUserId,
+        ic.content content,
+        ic.gmt_create gmtCreate,
+        user_info.avatar_url innerAuthorAvatarUrl,
+        user.username authorUsername
+        from inner_comment as ic
+        inner join user_info
+        on user_info.user_id = ic.user_id
+        inner join user
+        on ic.user_id = user.id
+        where to_comment = #{comment_id}
+    </select>
 </mapper>
