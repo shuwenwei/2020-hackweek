@@ -3,15 +3,16 @@ package com.sww.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sun.corba.se.impl.resolver.SplitLocalResolverImpl;
 import com.sww.mapper.UserInfoMapper;
 import com.sww.pojo.UserInfo;
+import com.sww.pojo.view.ViewListUser;
 import com.sww.service.UserInfoService;
 import com.sww.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author sww
@@ -20,7 +21,13 @@ import org.springframework.stereotype.Service;
 public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements UserInfoService {
 
     private RedisUtil redisUtil;
+    private UserInfoMapper userInfoMapper;
     private static String USER_INFO_PREFIX = "userInfo::";
+
+    @Autowired
+    public void setUserInfoMapper(UserInfoMapper userInfoMapper) {
+        this.userInfoMapper = userInfoMapper;
+    }
 
     @Autowired
     public void setRedisUtil(RedisUtil redisUtil) {
@@ -57,6 +64,11 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         }
 
         return update;
+    }
+
+    @Override
+    public List<ViewListUser> getViewListUsers(Set usersId) {
+        return userInfoMapper.getViewListUsers(usersId);
     }
 
 }

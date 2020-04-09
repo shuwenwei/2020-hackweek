@@ -1,5 +1,6 @@
 package com.sww;
 
+import com.sww.service.UserInfoService;
 import com.sww.util.RedisUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,12 @@ import java.util.Set;
 public class MyTest1 {
 
     private RedisUtil redisUtil;
+    private UserInfoService userInfoService;
+
+    @Autowired
+    public void setUserInfoService(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
+    }
 
     @Autowired
     public void setRedisUtil(RedisUtil redisUtil) {
@@ -39,6 +46,9 @@ public class MyTest1 {
         System.out.println("3333 -> " + redisUtil.getFollowNum(3333L));
         System.out.println("3333 -> " + redisUtil.getFollowedNum(3333L));
 
-        redisUtil.getMostFollowed().forEach(System.out::println);
+        Set<Object> followers = redisUtil.getFollowers(3333L);
+        Set<Object> followes = redisUtil.getFollows(1111L);
+        System.out.println(followes);
+        userInfoService.getViewListUsers(followers).forEach(System.out::println);
     }
 }

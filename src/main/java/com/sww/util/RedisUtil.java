@@ -94,6 +94,32 @@ public class RedisUtil {
                 .reverseRangeByScore("likeNum", Long.MIN_VALUE, Long.MAX_VALUE, 0, 10);
     }
 
+    /**
+     * 获取粉丝
+     * 已测试
+     */
+    public Set<Object> getFollowers(Long userId) {
+        return redisTemplate
+                .opsForSet()
+                .distinctRandomMembers("followers::" + userId, 30);
+    }
+
+    /**
+     * 获取关注的人
+     * 已测试
+     */
+    public Set<Object> getFollows(Long userId) {
+        return redisTemplate
+                .opsForSet()
+                .distinctRandomMembers("follow::" + userId, 30);
+    }
+
+    /**
+     * 已测试
+     */
+    public boolean isFollowed(Long userId, Long followedUserId) {
+        return sHasKey("follow::" + userId, followedUserId);
+    }
 
     /**
      * 已测试

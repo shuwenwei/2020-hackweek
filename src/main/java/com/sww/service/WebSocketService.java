@@ -43,6 +43,7 @@ public class WebSocketService {
 
     @OnOpen
     public void onOpen(Session session) {
+        session.setMaxIdleTimeout(60 * 60 * 1000);
         this.session = session;
         String id = (String) session.getUserProperties().get("userId");
         if (id != null) {

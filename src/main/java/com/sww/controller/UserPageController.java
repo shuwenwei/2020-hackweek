@@ -8,6 +8,7 @@ import com.sww.pojo.Article;
 import com.sww.pojo.ResponseBean;
 import com.sww.pojo.User;
 import com.sww.pojo.UserInfo;
+import com.sww.pojo.view.ViewListUser;
 import com.sww.service.ArticleService;
 import com.sww.service.UserInfoService;
 import com.sww.util.QiniuUtil;
@@ -54,6 +55,38 @@ public class UserPageController {
     @Autowired
     public void setUserInfoService(UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
+    }
+
+    /**
+     * 获取用户粉丝
+     */
+    @GetMapping("/self/follower/{userId}")
+    public ResponseBean getUserFollowers(@PathVariable Long userId) {
+        if (userInfoService.getUserInfo(userId) == null) {
+            throw new BadRequestException("用户不存在");
+        }
+        Set followers = redisUtil.getFollowers(userId);
+        if (followers.isEmpty()) {
+            return new ResponseBean("没有被任何人关注", null, 1);
+        }
+        List<ViewListUser> viewFollowers = userInfoService.getViewListUsers(followers);
+
+        return new ResponseBean("获取成功", viewFollowers, 1);
+    }
+
+    @GetMapping("/self/follows/{userId}")
+    public ResponseBean getUserFollows(@PathVariable Long userId) {
+        if (userInfoService.getUserInfo(userId) == null) {
+            throw new BadRequestException("用户不存在");
+        }
+        Set follows = redisUtil.getFollows(userId);
+
+        if (follows.isEmpty()) {
+            return new ResponseBean("没有关注任何人", null, 1);
+        }
+        List<ViewListUser> viewFollows = userInfoService.getViewListUsers(follows);
+        return new ResponseBean("获取成功", viewFollows, 1);
+
     }
 
     /**
@@ -121,6 +154,11 @@ public class UserPageController {
                 .page(articlePage, wrapper)
                 .getRecords();
         Map<String, Object> pageInfo = new HashMap<>(4);
+
+//        是否已关注
+        User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
+        boolean isFollowed = redisUtil.isFollowed(currentUser.getId(), userId);
+        pageInfo.put("isFollowed", isFollowed);
 
         if (page == 1) {
             pageInfo.put("userInfo", userInfo);

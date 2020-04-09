@@ -3,8 +3,11 @@ package com.sww.service;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sww.pojo.UserInfo;
+import com.sww.pojo.view.ViewListUser;
+import org.apache.ibatis.annotations.Param;
 
-import java.sql.Wrapper;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author sww
@@ -25,4 +28,11 @@ public interface UserInfoService extends IService<UserInfo> {
      * @return 是否成功
      */
     public boolean updateUserInfo(UserInfo userInfo, UpdateWrapper<UserInfo> wrapper);
+
+    /**
+     * 获取粉丝信息
+     * @param usersId 粉丝的id集合
+     * @return ViewFollower列表
+     */
+    public List<ViewListUser> getViewListUsers(@Param("set") Set usersId);
 }
