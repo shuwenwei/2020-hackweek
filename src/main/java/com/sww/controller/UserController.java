@@ -13,6 +13,9 @@ import com.sww.util.BindingResultUtil;
 import com.sww.util.JwtUtil;
 import com.sww.util.PasswordUtil;
 import com.sww.util.ValidateCodeUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
  * 已经全部测试过
  * @author sww
  */
-
+@Api(value = "注册，登录，请求发送邮件，忘记密码")
 @RestController
 @RequestMapping("/account")
 public class UserController {
@@ -45,8 +48,9 @@ public class UserController {
     /**
      * @param user username password
      */
+    @ApiOperation(value = "获取token")
     @PostMapping("/token")
-    public ResponseBean login(@RequestBody @Validated(OnInsertValidateGroup.class) User user
+    public ResponseBean login(@RequestBody @ApiParam(required = true) @Validated(OnInsertValidateGroup.class) User user
             , BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
 

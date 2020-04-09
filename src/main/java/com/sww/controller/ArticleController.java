@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -62,18 +61,18 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
-    @GetMapping("/")
-    public ResponseBean followUser(@RequestBody @Validated Follow follow, BindingResult bindingResult) {
-        BindingResultUtil.checkBinding(bindingResult);
+
+    @PostMapping("/follow/{followedUserId}")
+    public ResponseBean followUser(@PathVariable Long followedUserId) {
 
         User user = (User) SecurityUtils.getSubject().getPrincipal();
 //        当前用户id
         Long userId = user.getId();
-        follow.setUserId(userId);
-        Long followedUserId = follow.getFollowedUserId();
 
         if (userService.getById(followedUserId) == null) {
             throw new BadRequestException("关注的用户不存在");
+        } else if (userId.equals(followedUserId)) {
+            throw new BadRequestException("无法关注");
         }
 
         boolean isFollow = redisUtil.sHasKey("follow::" + userId, followedUserId);
@@ -83,6 +82,24 @@ public class ArticleController {
         }
         redisUtil.followUser(userId, followedUserId);
         return new ResponseBean("关注成功", null, 1);
+    }
+
+    @PostMapping("/like/{articleId}")
+    public ResponseBean likeArticle(@PathVariable Long articleId) {
+        if (!articleService.articleExist(articleId)) {
+            throw new BadRequestException("文章不存在");
+        }
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        //
+        Long userId = user.getId();
+        boolean liked = redisUtil.isLiked(userId, articleId);
+        if (liked) {
+            redisUtil.unlike(userId, articleId);
+            return new ResponseBean("取消点赞成功", null, 1);
+        } else {
+            redisUtil.like(userId, articleId);
+            return new ResponseBean("点赞成功", null, 1);
+        }
     }
 
     /**
@@ -98,11 +115,17 @@ public class ArticleController {
             throw new BadRequestException("文章不存在");
         }
         System.out.println(article);
-        LinkedHashMap<String, Object> articleAndComment = new LinkedHashMap<>(4);
+        LinkedHashMap<String, Object> articleAndComment = new LinkedHashMap<>(6);
         //获得文章信息
         if (page == 1) {
             articleAndComment.put("article", article);
         }
+
+        //是否已点过赞
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        boolean liked = redisUtil.isLiked(user.getId(), id);
+        articleAndComment.put("isLiked", liked);
+
         //获得回复信息
         Page<ViewComment> viewCommentPage = new Page<ViewComment>()
                 .setCurrent(page)

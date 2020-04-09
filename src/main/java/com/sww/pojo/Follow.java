@@ -17,8 +17,8 @@ public class Follow {
     @TableId(type = IdType.ASSIGN_ID)
     @Null
     private Long id;
-    @NotNull
-    private Long userId;
     @Null
+    private Long userId;
+    @NotNull
     private Long followedUserId;
 }

@@ -23,6 +23,9 @@ public class RedisUtil {
         this.redisTemplate = redisTemplate;
     }
 
+    /**
+     * 已测试
+     */
     public void followUser(Long userId, Long followedUserId) {
 //        在被关注用户的粉丝列表添加
         sSet("followers::" + followedUserId, userId);
@@ -32,6 +35,9 @@ public class RedisUtil {
         sSet("follow::" + userId, followedUserId);
     }
 
+    /**
+     * 已测试
+     */
     public void unfollowUser(Long userId, Long followedUserId) {
 //        在被关注用户的粉丝列表添加去除
         setRemove("followers::" + followedUserId, userId);
@@ -39,6 +45,14 @@ public class RedisUtil {
         redisTemplate.opsForZSet().incrementScore("followed", followedUserId, -1);
 //        在该用户的关注列表去除被关注的用户的id
         setRemove("follow::" + userId, followedUserId);
+    }
+
+    /**
+     * 已测试
+     */
+    public boolean isLiked(Long userId, Long articleId) {
+        String key = "userlikes::" + userId;
+        return hasKey(key) && sHasKey(key, articleId);
     }
 
     /**
@@ -80,6 +94,16 @@ public class RedisUtil {
                 .reverseRangeByScore("likeNum", Long.MIN_VALUE, Long.MAX_VALUE, 0, 10);
     }
 
+
+    /**
+     * 已测试
+     */
+    public Set<Object> getMostFollowed() {
+        return redisTemplate
+                .opsForZSet()
+                .reverseRangeByScore("followed", Long.MIN_VALUE, Long.MAX_VALUE, 0, 10);
+    }
+
     /**
      * 已测试
      * 获取用户获得的点赞数
@@ -89,14 +113,20 @@ public class RedisUtil {
         return hasKey(key)? redisTemplate.opsForSet().size(key).intValue() : 0;
     }
 
+    /**
+     * 获取粉丝数量
+     */
     public Integer getFollowedNum(Long userId) {
-        String key = "followed::" + userId.toString();
-        return hasKey(key)? (Integer) get(key) : 0;
+        String key = "followers::" + userId.toString();
+        return hasKey(key)? redisTemplate.opsForSet().size(key).intValue() : 0;
     }
 
+    /**
+     * 获取关注的人的数量
+     */
     public Integer getFollowNum(Long userId) {
         String key = "follow::" + userId.toString();
-        return hasKey(key)? (Integer) get(key) : 0;
+        return hasKey(key)? redisTemplate.opsForSet().size(key).intValue() : 0;
     }
 
 
