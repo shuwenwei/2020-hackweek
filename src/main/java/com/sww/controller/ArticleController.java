@@ -1,6 +1,5 @@
 package com.sww.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sww.exception.BadRequestException;
 import com.sww.pojo.*;
@@ -8,6 +7,7 @@ import com.sww.pojo.view.PackedArticle;
 import com.sww.pojo.view.ViewComment;
 import com.sww.service.*;
 import com.sww.util.BindingResultUtil;
+import com.sww.util.RedisUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -36,6 +35,12 @@ public class ArticleController {
     private UserService userService;
     private ArticleCommentService articleCommentService;
     private InnerCommentService innerCommentService;
+    private RedisUtil redisUtil;
+
+    @Autowired
+    public void setRedisUtil(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     @Autowired
     public void setInnerCommentService(InnerCommentService innerCommentService) {
@@ -57,7 +62,31 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
+    @GetMapping("/")
+    public ResponseBean followUser(@RequestBody @Validated Follow follow, BindingResult bindingResult) {
+        BindingResultUtil.checkBinding(bindingResult);
+
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+//        当前用户id
+        Long userId = user.getId();
+        follow.setUserId(userId);
+        Long followedUserId = follow.getFollowedUserId();
+
+        if (userService.getById(followedUserId) == null) {
+            throw new BadRequestException("关注的用户不存在");
+        }
+
+        boolean isFollow = redisUtil.sHasKey("follow::" + userId, followedUserId);
+        if (isFollow) {
+            redisUtil.unfollowUser(userId, followedUserId);
+            return new ResponseBean("取消关注成功", null, 1);
+        }
+        redisUtil.followUser(userId, followedUserId);
+        return new ResponseBean("关注成功", null, 1);
+    }
+
     /**
+     * 已测试
      * 获取文章
      * @param id 文章id
      * @param page 评论的页数
@@ -151,6 +180,9 @@ public class ArticleController {
         throw new BadRequestException("文章不存在");
     }
 
+    /**
+     * 已测试
+     */
     @PostMapping("/comment/inner")
     public ResponseBean postInnerComment(@RequestBody @Validated InnerComment innerComment, BindingResult bindingResult) {
         System.out.println(innerComment);
@@ -167,6 +199,7 @@ public class ArticleController {
         }
 
         sendMessageToArticleAuthor(comment);
+        sendMessageToCommentAuthor(innerComment, comment);
 
         innerCommentService.save(innerComment);
         return new ResponseBean("发送成功", null, 1);
@@ -174,6 +207,17 @@ public class ArticleController {
 
     private void sendMessageToCommentAuthor(InnerComment innerComment, ArticleComment toComment) {
         String toCommentUserId = toComment.getAuthorId().toString();
+
+        if (!WebSocketService.isUserOnline(toCommentUserId)) {
+            return;
+        }
+
+        //评论作者和评论的回复作者相同不推送
+        if (innerComment.getUserId().equals(toComment.getAuthorId())) {
+            return;
+        }
+//        需要修改
+//
         WebSocketResponseBean bean = new WebSocketResponseBean("comment", "收到一条新回复", innerComment.getContent());
         try {
             WebSocketService.sendMessage(toCommentUserId, bean);
@@ -191,16 +235,24 @@ public class ArticleController {
 
     private void sendMessageToArticleAuthor(ArticleComment articleComment) {
         String articleAuthorId = articleComment.getAuthorId().toString();
-        WebSocketResponseBean bean = new WebSocketResponseBean("comment", "收到一条新回复", articleComment.getContent());
+
+        if (!WebSocketService.isUserOnline(articleAuthorId)) {
+            return;
+        }
+
 //        给文章作者发送
         String articleCommentAuthorId = articleComment.getAuthorId().toString();
 //        如果文章作者和回复人相同则不推送
         if (articleAuthorId.equals(articleCommentAuthorId)) {
-            try {
-                WebSocketService.sendMessage(articleAuthorId, bean);
-            } catch (IOException | EncodeException e) {
-                e.printStackTrace();
-            }
+            return;
+        }
+//        需要修改
+//
+        WebSocketResponseBean bean = new WebSocketResponseBean("comment", "收到一条新回复", articleComment.getContent());
+        try {
+            WebSocketService.sendMessage(articleAuthorId, bean);
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
         }
 
 //        Long toComment = articleComment.getToComment();

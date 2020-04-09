@@ -37,6 +37,10 @@ public class WebSocketService {
         return true;
     }
 
+    public static boolean isUserOnline(String userId) {
+        return services.containsKey(userId);
+    }
+
     @OnOpen
     public void onOpen(Session session) {
         this.session = session;

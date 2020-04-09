@@ -57,13 +57,6 @@
         <result property="avatarUrl" column="avatar"/>
         <result property="gmtCreate" column="gmt"/>
         <collection property="innerComments" javaType="list" column="comment_id" select="getInnerComments" ofType="com.sww.pojo.view.ViewInnerComment"/>
-<!--        <collection property="innerComments" ofType="com.sww.pojo.view.ViewInnerComment" select="getInnerComments" column="comment_id">-->
-<!--            <result property="authorUserId" column="inner_author_id"/>-->
-<!--            <result property="authorUsername" column="inner_author_username"/>-->
-<!--            <result property="content" column="inner_content"/>-->
-<!--            <result property="innerAuthorAvatarUrl" column="inner_avatar"/>-->
-<!--            <result property="gmtCreate" column="inner_gmt"/>-->
-<!--        </collection>-->
     </resultMap>
 
     <select id="getInnerComments" resultType="com.sww.pojo.view.ViewInnerComment">

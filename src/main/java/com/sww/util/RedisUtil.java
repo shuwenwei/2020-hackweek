@@ -23,9 +23,70 @@ public class RedisUtil {
         this.redisTemplate = redisTemplate;
     }
 
+    public void followUser(Long userId, Long followedUserId) {
+//        在被关注用户的粉丝列表添加
+        sSet("followers::" + followedUserId, userId);
+//        在全体用户关注数的排行中修改被关注者的粉丝数
+        redisTemplate.opsForZSet().incrementScore("followed", followedUserId, 1);
+//        在该用户的关注列表添加被关注的用户的id
+        sSet("follow::" + userId, followedUserId);
+    }
+
+    public void unfollowUser(Long userId, Long followedUserId) {
+//        在被关注用户的粉丝列表添加去除
+        setRemove("followers::" + followedUserId, userId);
+//        在全体用户关注数的排行中修改被关注者的粉丝数
+        redisTemplate.opsForZSet().incrementScore("followed", followedUserId, -1);
+//        在该用户的关注列表去除被关注的用户的id
+        setRemove("follow::" + userId, followedUserId);
+    }
+
+    /**
+     * 已测试
+     * @param userId 当前用户的id
+     * @param likedArticleId 被点赞的文章的id
+     */
+    public void like(Long userId, Long likedArticleId) {
+//        添加用户到文章点赞集合
+        sSet("likedusers::" + likedArticleId, userId);
+//        添加文章到用户的点赞记录
+        sSet("userlikes::" + userId, likedArticleId);
+//        在点赞数排行中将文章点赞数加1
+        redisTemplate.opsForZSet().incrementScore("likeNum", likedArticleId, 1);
+    }
+
+    /**
+     * 已测试
+     * @param userId 当前用户的id
+     * @param likedArticleId 被点赞的文章的id
+     */
+    public void unlike(Long userId, Long likedArticleId) {
+//        去除用户到文章点赞集合
+        setRemove("likedusers::" + likedArticleId, userId);
+//        去除文章到用户的点赞记录
+        setRemove("userlikes::" + userId, likedArticleId);
+//        在点赞数排行中将文章点赞数减1
+        redisTemplate.opsForZSet().incrementScore("likeNum", likedArticleId, -1);
+    }
+
+    /**
+     * 已测试
+     * 获取获得赞数最多的10篇文章id集合
+     * @return
+     */
+    public Set<Object> getMostLiked() {
+        return redisTemplate
+                .opsForZSet()
+                .reverseRangeByScore("likeNum", Long.MIN_VALUE, Long.MAX_VALUE, 0, 10);
+    }
+
+    /**
+     * 已测试
+     * 获取用户获得的点赞数
+     */
     public Integer getLikedNum(Long userId) {
-        String key = "liked::" + userId.toString();
-        return hasKey(key)? (Integer) get(key) : 0;
+        String key = "userlikes::" + userId.toString();
+        return hasKey(key)? redisTemplate.opsForSet().size(key).intValue() : 0;
     }
 
     public Integer getFollowedNum(Long userId) {
