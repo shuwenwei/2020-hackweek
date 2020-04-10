@@ -1,7 +1,6 @@
 package com.sww.pojo;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -35,11 +34,9 @@ public class Article {
     private Date gmtCreate;
     @Null
     @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
-    @JsonIgnore
     private Date gmtModified;
     @TableField(value = "is_delete", select = false, fill = FieldFill.INSERT)
     @Null
     @TableLogic
-    @JsonIgnore
     private Integer delete;
 }

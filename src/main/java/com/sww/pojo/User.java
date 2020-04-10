@@ -1,10 +1,8 @@
 package com.sww.pojo;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sww.pojo.group.OnExtraConditionGroup;
 import com.sww.pojo.group.OnInsertValidateGroup;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +33,6 @@ public class User {
     @TableField(value = "password")
     @NotNull(groups = {OnInsertValidateGroup.class}, message = "password不能为空")
     @Pattern(regexp = "[0-9a-zA-z]{6,20}")
-    @JsonIgnore
     private String password;
 
     @NotNull(groups = {OnExtraConditionGroup.class}, message = "email不能为空")
@@ -43,23 +40,19 @@ public class User {
     private String email;
 
     @Null
-    @JsonIgnore
     private String role;
 
     @TableField(fill = FieldFill.INSERT, select = false)
     @Null
-    @JsonIgnore
     private Date gmtCreate;
 
     @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
     @Null
-    @JsonIgnore
     private Date gmtModified;
 
     @TableLogic
     @TableField(value = "is_delete", select = false, fill = FieldFill.INSERT)
     @Null
-    @JsonIgnore
     private Integer delete;
 
 

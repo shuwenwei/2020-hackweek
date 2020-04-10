@@ -139,6 +139,7 @@ public class UserPageController {
     }
 
     /**
+     * 已测试
      * 查看某人的个人信息
      */
     @GetMapping("/self/{userId}")
