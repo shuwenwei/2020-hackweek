@@ -559,3 +559,51 @@
 }
 ```
 
+### 12\. 上传个人头像
+
+#### 接口功能
+
+> 上传个人头像
+
+#### URL
+
+> /self/avatar
+
+#### HTTP请求方式
+
+> POST
+
+#### 请求头
+
+| 参数          | 类型                | 说明                |
+| ------------- | ------------------- | ------------------- |
+| Content-Type  | multipart/form-data |                     |
+| Authorization | token               | 在登录时获得的token |
+
+#### 请求体
+
+> | 参数   | 必选  | 类型          | 说明                 |
+> | :----- | :---- | :------------ | -------------------- |
+> | avatar | false | MultipartFile | 用户头像图片(1m以内) |
+
+#### 接口示例
+
+> 地址：/self/avatar
+
+##### 请求
+
+``` json
+
+```
+
+##### 响应
+
+``` json
+{
+    "message": "上传成功",
+    "data": "http://q89jpbw7d.bkt.clouddn.com/FsVIUUhwwO86xy4JfjBP-5suhKvP",
+    "status": 1
+}
+```
+
+### 
