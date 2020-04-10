@@ -56,16 +56,6 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
-    /**
-     * 按点赞数排行进行推荐文章
-     */
-    @GetMapping("/most/like")
-    public ResponseBean getMostLikedArticle() {
-        Set<Object> mostLiked = redisUtil.getMostLiked();
-        List<PackedArticle> mostLikedArticles = articleService.getArticlesBySet(mostLiked);
-        return new ResponseBean("获取成功", mostLikedArticles, 1);
-    }
-
     @PostMapping("/like/{articleId}")
     public ResponseBean likeArticle(@PathVariable Long articleId) {
         if (!articleService.articleExist(articleId)) {
