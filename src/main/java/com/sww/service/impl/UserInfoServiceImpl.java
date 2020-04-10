@@ -56,7 +56,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         boolean update = update(userInfo, wrapper);
 
         if (update && redisUtil.hasKey(key)) {
-            UserInfo cacheUserInfo = (UserInfo) redisUtil.get(key);
+            ViewUserInfo cacheUserInfo = (ViewUserInfo) redisUtil.get(key);
             cacheUserInfo.setBirth(userInfo.getBirth());
             cacheUserInfo.setIntroduction(userInfo.getIntroduction());
             redisUtil.set(key, cacheUserInfo);

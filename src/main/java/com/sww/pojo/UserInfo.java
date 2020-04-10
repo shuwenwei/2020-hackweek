@@ -2,6 +2,7 @@ package com.sww.pojo;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Null;
 import java.io.Serializable;
@@ -30,5 +31,6 @@ public class UserInfo implements Serializable {
     @TableField(select = false)
     private Integer likedNum;
     private Date birth;
+    @Length(max = 100)
     private String introduction;
 }
