@@ -9,10 +9,7 @@ import com.sww.pojo.group.OnInsertValidateGroup;
 import com.sww.pojo.group.OnUpdateValidateGroup;
 import com.sww.service.AsyncService;
 import com.sww.service.UserService;
-import com.sww.util.BindingResultUtil;
-import com.sww.util.JwtUtil;
-import com.sww.util.PasswordUtil;
-import com.sww.util.ValidateCodeUtil;
+import com.sww.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,6 +32,12 @@ public class UserController {
 
     private UserService userService;
     private AsyncService asyncService;
+    private RedisUtil redisUtil;
+
+    @Autowired
+    public void setRedisUtil(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     @Autowired
     public void setAsyncService(AsyncService asyncService) {
@@ -59,7 +62,14 @@ public class UserController {
         String reqPassword = user.getPassword();
         User dbUser = userService.findUserByUsername(reqUsername);
         if (PasswordUtil.verify(reqPassword, dbUser.getPassword())) {
-            return new ResponseBean("登录成功", JwtUtil.generateToken(dbUser), 1);
+            String key = "token::" + dbUser.getId();
+            if (redisUtil.hasKey(key)) {
+                return new ResponseBean("登录成功", redisUtil.get(key), 1);
+            }
+            String token = JwtUtil.generateToken(dbUser);
+//            在缓存中放入token
+            redisUtil.set("token::" + dbUser.getId(), token, 60*60*2);
+            return new ResponseBean("登录成功", token, 1);
         }
         throw new BadRequestException("用户名或密码错误");
     }

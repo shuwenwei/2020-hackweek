@@ -1,5 +1,6 @@
 package com.sww.config.shiroconfig;
 
+import com.sww.util.RedisUtil;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
@@ -11,6 +12,7 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -41,12 +43,14 @@ public class ShiroConfig {
     }
 
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager defaultWebSecurityManager) {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager defaultWebSecurityManager, RedisTemplate<String, Object> redisTemplate) {
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
         bean.setSecurityManager(defaultWebSecurityManager);
 
         Map<String, Filter> filters = new LinkedHashMap<>(4);
-        filters.put("myJwtFilter", new JwtFilter());
+        JwtFilter jwtFilter = new JwtFilter();
+        jwtFilter.setRedisTemplate(redisTemplate);
+        filters.put("myJwtFilter", jwtFilter);
         bean.setFilters(filters);
 
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>(16);

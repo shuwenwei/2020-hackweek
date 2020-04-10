@@ -20,12 +20,7 @@ public class MyRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-//        String username = principalCollection.toString();
-//        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-//        User user = userService.getOne(userQueryWrapper.eq("username", username));
-//        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-//        info.addRole(user.getRole());
-//        return info;
+
         User user = (User) principalCollection.getPrimaryPrincipal();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.addRole(user.getRole());

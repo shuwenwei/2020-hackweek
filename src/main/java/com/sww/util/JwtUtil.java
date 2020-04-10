@@ -15,12 +15,12 @@ public class JwtUtil {
     private JwtUtil(){
     }
 
-    private static final long EXPIRE_TIME = 2*60*60*1000;
+//    private static final long EXPIRE_TIME = 2*60*60*1000;
     private static final String SECRET_KEY = "139uaj13a4ga-0139f1";
 
     public static String generateToken(User user){
         return Jwts.builder()
-                .setExpiration(new Date(System.currentTimeMillis()+EXPIRE_TIME))
+//                .setExpiration(new Date(System.currentTimeMillis()+EXPIRE_TIME))
                 .setId(user.getId().toString())
                 .setSubject(user.getRole())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
