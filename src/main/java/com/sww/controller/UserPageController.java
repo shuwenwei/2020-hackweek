@@ -66,7 +66,7 @@ public class UserPageController {
         if (userInfoService.getUserInfo(userId) == null) {
             throw new BadRequestException("用户不存在");
         }
-        Set followers = redisUtil.getFollowers(userId);
+        Set<Object> followers = redisUtil.getFollowers(userId);
         if (followers.isEmpty()) {
             return new ResponseBean("没有被任何人关注", null, 0);
         }
@@ -83,7 +83,7 @@ public class UserPageController {
         if (userInfoService.getUserInfo(userId) == null) {
             throw new BadRequestException("用户不存在");
         }
-        Set follows = redisUtil.getFollows(userId);
+        Set<Object> follows = redisUtil.getFollows(userId);
 
         if (follows.isEmpty()) {
             return new ResponseBean("没有关注任何人", null, 0);
@@ -128,9 +128,6 @@ public class UserPageController {
         Long userId = user.getId();
         userInfo.setUserId(userId);
 
-//        boolean update = userInfoService
-//                .update(userInfo, new UpdateWrapper<UserInfo>()
-//                        .eq("user_id", userId));
         boolean update = userInfoService
                 .updateUserInfo(userInfo, new UpdateWrapper<UserInfo>().
                         eq("user_id", userId));
@@ -157,14 +154,14 @@ public class UserPageController {
         List<Article> articles = articleService
                 .page(articlePage, wrapper)
                 .getRecords();
-        Map<String, Object> pageInfo = new HashMap<>(4);
+        Map<String, Object> pageInfo = new HashMap<>(6);
 
 //        是否已关注
-        User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
-        boolean isFollowed = redisUtil.isFollowed(currentUser.getId(), userId);
-        pageInfo.put("isFollowed", isFollowed);
 
         if (page == 1) {
+            User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
+            boolean isFollowed = redisUtil.isFollowed(currentUser.getId(), userId);
+            pageInfo.put("isFollowed", isFollowed);
             pageInfo.put("userInfo", userInfo);
         }
         pageInfo.put("articles", articles);
@@ -201,5 +198,27 @@ public class UserPageController {
                         .eq("user_id", userId));
 
         return new ResponseBean("上传成功", url, 1);
+    }
+
+    @PostMapping("/follow/{followedUserId}")
+    public ResponseBean followUser(@PathVariable Long followedUserId) {
+
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+//        当前用户id
+        Long userId = user.getId();
+
+        if (userInfoService.getById(followedUserId) == null) {
+            throw new BadRequestException("关注的用户不存在");
+        } else if (userId.equals(followedUserId)) {
+            throw new BadRequestException("无法关注");
+        }
+
+        boolean isFollow = redisUtil.sHasKey("follow::" + userId, followedUserId);
+        if (isFollow) {
+            redisUtil.unfollowUser(userId, followedUserId);
+            return new ResponseBean("取消关注成功", null, 1);
+        }
+        redisUtil.followUser(userId, followedUserId);
+        return new ResponseBean("关注成功", null, 1);
     }
 }

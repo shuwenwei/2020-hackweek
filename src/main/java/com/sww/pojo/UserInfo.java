@@ -1,6 +1,7 @@
 package com.sww.pojo;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -16,6 +17,7 @@ import java.util.Date;
 public class UserInfo implements Serializable {
     @TableId(type = IdType.ASSIGN_ID)
     @Null
+    @JsonIgnore
     private Long id;
     @Null
     private Long userId;

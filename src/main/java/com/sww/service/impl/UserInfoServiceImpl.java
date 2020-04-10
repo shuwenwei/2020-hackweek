@@ -1,6 +1,5 @@
 package com.sww.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sww.mapper.UserInfoMapper;
@@ -66,7 +65,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     }
 
     @Override
-    public List<ViewListUser> getViewListUsers(Set usersId) {
+    public List<ViewListUser> getViewListUsers(Set<Object> usersId) {
         return userInfoMapper.getViewListUsers(usersId);
     }
 

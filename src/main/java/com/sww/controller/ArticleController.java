@@ -62,28 +62,6 @@ public class ArticleController {
     }
 
 
-    @PostMapping("/follow/{followedUserId}")
-    public ResponseBean followUser(@PathVariable Long followedUserId) {
-
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
-//        当前用户id
-        Long userId = user.getId();
-
-        if (userService.getById(followedUserId) == null) {
-            throw new BadRequestException("关注的用户不存在");
-        } else if (userId.equals(followedUserId)) {
-            throw new BadRequestException("无法关注");
-        }
-
-        boolean isFollow = redisUtil.sHasKey("follow::" + userId, followedUserId);
-        if (isFollow) {
-            redisUtil.unfollowUser(userId, followedUserId);
-            return new ResponseBean("取消关注成功", null, 1);
-        }
-        redisUtil.followUser(userId, followedUserId);
-        return new ResponseBean("关注成功", null, 1);
-    }
-
     @PostMapping("/like/{articleId}")
     public ResponseBean likeArticle(@PathVariable Long articleId) {
         if (!articleService.articleExist(articleId)) {

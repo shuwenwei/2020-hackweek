@@ -1,6 +1,7 @@
 package com.sww.pojo;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -25,9 +26,11 @@ public class InnerComment {
     private Date gmtCreate;
     @TableField(fill = FieldFill.INSERT_UPDATE, select = false)
     @Null
+    @JsonIgnore
     private Date gmtModified;
     @TableLogic
     @Null
     @TableField(fill = FieldFill.INSERT, select = false, value = "is_delete")
+    @JsonIgnore
     private Boolean delete;
 }

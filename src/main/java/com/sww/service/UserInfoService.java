@@ -35,5 +35,5 @@ public interface UserInfoService extends IService<UserInfo> {
      * @param usersId 粉丝的id集合
      * @return ViewFollower列表
      */
-    public List<ViewListUser> getViewListUsers(@Param("set") Set usersId);
+    public List<ViewListUser> getViewListUsers(@Param("set") Set<Object> usersId);
 }

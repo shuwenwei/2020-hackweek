@@ -17,6 +17,8 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "gmtCreate", Date.class, new Date());
         this.strictInsertFill(metaObject, "gmtModified", Date.class, new Date());
         this.strictInsertFill(metaObject, "delete", Integer.class, 0);
+        this.strictInsertFill(metaObject, "introduction", String.class, "未填写");
+
 //        this.strictInsertFill(metaObject, "followNum", Integer.class, 0);
 //        this.strictInsertFill(metaObject, "likedNum", Integer.class, 0);
     }
