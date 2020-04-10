@@ -16,4 +16,21 @@
             #{item}
         </foreach>
     </select>
+
+    <select id="getViewUserInfo" resultType="com.sww.pojo.view.ViewUserInfo">
+        select
+        user.username username,
+        user.id userId,
+        ui.avatar_url avatar,
+        ui.follow_num followNum,
+        ui.followed_num followedNum,
+        ui.liked_num likedNum,
+        ui.introduction introduction,
+        ui.birth birth
+        from user_info as ui
+        inner join user
+        on user.id = ui.user_id
+        where user.id = #{userId}
+        and user.is_delete = 0
+    </select>
 </mapper>

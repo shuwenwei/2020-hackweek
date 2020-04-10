@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sww.mapper.UserInfoMapper;
 import com.sww.pojo.UserInfo;
 import com.sww.pojo.view.ViewListUser;
+import com.sww.pojo.view.ViewUserInfo;
 import com.sww.service.UserInfoService;
 import com.sww.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,17 +36,15 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     }
 
     @Override
-    public UserInfo getUserInfo(Long id) {
+    public ViewUserInfo getUserInfo(Long id) {
         String key = USER_INFO_PREFIX + id.toString();
-        UserInfo cacheUserInfo = (UserInfo) redisUtil.get(key);
+        ViewUserInfo cacheUserInfo = (ViewUserInfo) redisUtil.get(key);
         //如果缓存中不存在userInfo
         if (cacheUserInfo != null) {
             return cacheUserInfo;
         }
 
-        UserInfo userInfo = baseMapper
-                .selectOne(new QueryWrapper<UserInfo>()
-                        .eq("user_id", id));
+        ViewUserInfo userInfo = userInfoMapper.getViewUserInfo(id);
         redisUtil.set(key, userInfo);
         return userInfo;
     }

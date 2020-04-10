@@ -3,6 +3,7 @@ package com.sww.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sww.pojo.UserInfo;
 import com.sww.pojo.view.ViewListUser;
+import com.sww.pojo.view.ViewUserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,4 +21,11 @@ public interface UserInfoMapper extends BaseMapper<UserInfo> {
      * @return ViewFollower列表
      */
     public List<ViewListUser> getViewListUsers(@Param("set") Set usersId);
+
+    /**
+     * 获取用户个人信息
+     * @param userId userId
+     * @return viewUserInfo
+     */
+    public ViewUserInfo getViewUserInfo(Long userId);
 }

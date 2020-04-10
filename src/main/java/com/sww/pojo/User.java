@@ -27,7 +27,7 @@ public class User {
     private Long id;
 
     @TableField(value = "username")
-    @NotNull(groups = {OnExtraConditionGroup.class, OnInsertValidateGroup.class}, message = "username不能为空")
+    @NotNull(groups = {OnInsertValidateGroup.class}, message = "username不能为空")
     @Pattern(regexp = "[0-9a-zA-z]{3,20}")
     private String username;
 

@@ -21,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Email;
 
 
 /**
@@ -65,26 +66,22 @@ public class UserController {
 
 
     /**
-     * @param user  需要username和email
+     * 已测试
      */
-    @PostMapping("/email")
-    public ResponseBean sendRegisterEmail(@RequestBody @Validated(OnExtraConditionGroup.class) User user
-            , BindingResult bindingResult) {
-        BindingResultUtil.checkBinding(bindingResult);
+    @GetMapping("/code")
+    public ResponseBean sendRegisterEmail(@RequestParam @Email String email) {
 
-        String email = user.getEmail();
-        String username = user.getUsername();
-        if (!userService.checkUsername(username) && !userService.checkEmail(email)) {
+        if (!userService.checkEmail(email)) {
             asyncService.sendMessage("注册", email);
-            return new ResponseBean("发送成功", null, 1);
+            return new ResponseBean("发送成功,十分钟内有效", null, 1);
         }
-        throw new BadRequestException("用户名或邮箱已存在");
+        throw new BadRequestException("邮箱已存在");
     }
 
     /**
      * @param registerUser 需要username password email 验证码
      */
-    @PostMapping("/register")
+    @PostMapping("/user")
     public ResponseBean checkAndRegister(@RequestBody @Validated(value = OnInsertValidateGroup.class)
             RegisterUser registerUser , BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
@@ -106,7 +103,7 @@ public class UserController {
         throw new BadRequestException("注册失败");
     }
 
-    @GetMapping("/forget")
+    @GetMapping("/password/code")
     public ResponseBean forgetPassword(@RequestParam String username) {
         System.out.println(username);
         User dbUser = userService.findUserByUsername(username);
@@ -118,14 +115,14 @@ public class UserController {
 
         String past = email.split("@")[1];
         String viewEmail = email.substring(0,2);
-        String msg = "已向" + viewEmail + "****" + "@" + past + "发送邮件";
+        String msg = "已向" + viewEmail + "****" + "@" + past + "发送邮件,十分钟内有效";
         return new ResponseBean(msg, null, 1);
     }
 
     /**
      * @param registerUser 需要username password 和 验证码
      */
-    @PutMapping("/forget")
+    @PutMapping("/password")
     public ResponseBean checkAndModify(@RequestBody @Validated(value = OnUpdateValidateGroup.class)
           RegisterUser registerUser, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);

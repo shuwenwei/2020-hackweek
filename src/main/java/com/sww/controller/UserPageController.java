@@ -9,6 +9,7 @@ import com.sww.pojo.ResponseBean;
 import com.sww.pojo.User;
 import com.sww.pojo.UserInfo;
 import com.sww.pojo.view.ViewListUser;
+import com.sww.pojo.view.ViewUserInfo;
 import com.sww.service.ArticleService;
 import com.sww.service.UserInfoService;
 import com.sww.util.QiniuUtil;
@@ -67,13 +68,16 @@ public class UserPageController {
         }
         Set followers = redisUtil.getFollowers(userId);
         if (followers.isEmpty()) {
-            return new ResponseBean("没有被任何人关注", null, 1);
+            return new ResponseBean("没有被任何人关注", null, 0);
         }
         List<ViewListUser> viewFollowers = userInfoService.getViewListUsers(followers);
 
         return new ResponseBean("获取成功", viewFollowers, 1);
     }
 
+    /**
+     * 获取用户关注的人
+     */
     @GetMapping("/self/follows/{userId}")
     public ResponseBean getUserFollows(@PathVariable Long userId) {
         if (userInfoService.getUserInfo(userId) == null) {
@@ -82,7 +86,7 @@ public class UserPageController {
         Set follows = redisUtil.getFollows(userId);
 
         if (follows.isEmpty()) {
-            return new ResponseBean("没有关注任何人", null, 1);
+            return new ResponseBean("没有关注任何人", null, 0);
         }
         List<ViewListUser> viewFollows = userInfoService.getViewListUsers(follows);
         return new ResponseBean("获取成功", viewFollows, 1);
@@ -96,7 +100,7 @@ public class UserPageController {
     @GetMapping("/self/main")
     public ResponseBean getSelfPage() {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
-        UserInfo userInfo = userInfoService.getUserInfo(user.getId());
+        ViewUserInfo userInfo = userInfoService.getUserInfo(user.getId());
 
         Long userId = user.getId();
         Integer followed = redisUtil.getFollowedNum(userId);
@@ -113,7 +117,7 @@ public class UserPageController {
      * 已测试
      * 修改用户的个人信息 需要introduction和birth
      */
-    @PutMapping("/self/modify")
+    @PutMapping("/self/main")
     public ResponseBean updateSelfInfo(@RequestBody @Validated UserInfo userInfo) {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         Date birth = userInfo.getBirth();
@@ -142,7 +146,7 @@ public class UserPageController {
      */
     @GetMapping("/self/{userId}")
     public ResponseBean getUserInfo(@PathVariable Long userId, @RequestParam @Min(1) int page) {
-        UserInfo userInfo = userInfoService.getUserInfo(userId);
+        ViewUserInfo userInfo = userInfoService.getUserInfo(userId);
         if (userInfo == null) {
             throw new BadRequestException("用户信息为空或用户不存在");
         }

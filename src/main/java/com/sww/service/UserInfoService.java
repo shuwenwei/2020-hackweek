@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sww.pojo.UserInfo;
 import com.sww.pojo.view.ViewListUser;
+import com.sww.pojo.view.ViewUserInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface UserInfoService extends IService<UserInfo> {
      * @param id 用户id
      * @return 用户个人信息
      */
-    public UserInfo getUserInfo(Long id);
+    public ViewUserInfo getUserInfo(Long id);
 
     /**
      * 更新用户个人信息
