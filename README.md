@@ -468,3 +468,94 @@
 }
 ```
 
+### 11\. 获取某个用户的个人主页信息
+
+#### 接口功能
+
+> 获取某个用户的个人主页信息
+
+#### URL
+
+> /self/{userId}?page=
+
+#### HTTP请求方式
+
+> GET
+
+#### 请求头
+
+| 参数          | 类型             | 说明                |
+| ------------- | ---------------- | ------------------- |
+| Content-Type  | application/json |                     |
+| Authorization | token            | 在登录时获得的token |
+
+#### 请求参数
+
+> | 参数 | 类型 | 说明                         |
+> | ---- | ---- | ---------------------------- |
+> | page | int  | 显示的用户发过的文章的第一页 |
+
+#### 接口示例
+
+> 地址：/self/1248438184791179265?page=1
+
+##### 请求
+
+``` json
+
+```
+
+##### 响应
+
+ 当page为1时会返回个人信息(userInfo)和是否已关注(isFollowed)
+
+``` json
+{
+    "message": "获取成功",
+    "data": {
+        "userInfo": {
+            "username": "sww",
+            "userId": "1248438184791179265",
+            "avatar": null,
+            "followNum": null,
+            "followedNum": null,
+            "likedNum": null,
+            "introduction": "1jof1je13fj1f1f",
+            "birth": "2010-10-10 00:00:00"
+        },
+        "articles": [
+            {
+                "id": "1248499219426439170",
+                "title": "swank1",
+                "articleType": 0,
+                "authorId": "1248438184791179265",
+                "content": "swank content",
+                "gmtCreate": "2020-04-10 06:33:05"
+            },
+            {
+                "id": "1248499299978047489",
+                "title": "story1",
+                "articleType": 1,
+                "authorId": "1248438184791179265",
+                "content": "story content",
+                "gmtCreate": "2020-04-10 06:33:24"
+            }
+        ],
+        "isFollowed": false
+    },
+    "status": 1
+}
+```
+
+当page大于1时,仅返回第二页文章列表
+
+``` json
+{
+    "message": "获取成功",
+    "data": {
+        "articles": []
+    },
+    "status": 1
+}
+```
+
