@@ -6,6 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sww.pojo.Article;
 import com.sww.pojo.view.PackedArticle;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -27,4 +31,11 @@ public interface ArticleMapper extends BaseMapper<Article> {
      * @return 文章对象
      */
     public PackedArticle getArticle(Long id);
+
+    /**
+     * 通过id集合获取文章列表
+     * @param articleIds 文章id集合
+     * @return 用于显示的文章列表
+     */
+    public List<PackedArticle> getArticlesBySet(@Param("set") Set<Object> articleIds);
 }

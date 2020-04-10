@@ -20,6 +20,7 @@ import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -31,7 +32,6 @@ import java.util.List;
 public class ArticleController {
 
     private ArticleService articleService;
-    private UserService userService;
     private ArticleCommentService articleCommentService;
     private InnerCommentService innerCommentService;
     private RedisUtil redisUtil;
@@ -47,11 +47,6 @@ public class ArticleController {
     }
 
     @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
     public void setArticleCommentService(ArticleCommentService articleCommentService) {
         this.articleCommentService = articleCommentService;
     }
@@ -61,6 +56,15 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
+    /**
+     * 按点赞数排行进行推荐文章
+     */
+    @GetMapping("/most/like")
+    public ResponseBean getMostLikedArticle() {
+        Set<Object> mostLiked = redisUtil.getMostLiked();
+        List<PackedArticle> mostLikedArticles = articleService.getArticlesBySet(mostLiked);
+        return new ResponseBean("获取成功", mostLikedArticles, 1);
+    }
 
     @PostMapping("/like/{articleId}")
     public ResponseBean likeArticle(@PathVariable Long articleId) {
@@ -68,7 +72,7 @@ public class ArticleController {
             throw new BadRequestException("文章不存在");
         }
         User user = (User) SecurityUtils.getSubject().getPrincipal();
-        //
+        //m
         Long userId = user.getId();
         boolean liked = redisUtil.isLiked(userId, articleId);
         if (liked) {

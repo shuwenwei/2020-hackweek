@@ -90,7 +90,6 @@ public class UserPageController {
         }
         List<ViewListUser> viewFollows = userInfoService.getViewListUsers(follows);
         return new ResponseBean("获取成功", viewFollows, 1);
-
     }
 
     /**
@@ -151,16 +150,16 @@ public class UserPageController {
         Page<Article> articlePage = new Page<>();
         articlePage.setCurrent(page);
         QueryWrapper<Article> wrapper = new QueryWrapper<Article>()
-                .eq("author_id", userId);
+                .eq("author_id", userId)
+                .orderByDesc("gmt_create");
         List<Article> articles = articleService
                 .page(articlePage, wrapper)
                 .getRecords();
         Map<String, Object> pageInfo = new HashMap<>(6);
 
-//        是否已关注
-
         if (page == 1) {
             User currentUser = (User) SecurityUtils.getSubject().getPrincipal();
+            //        是否已关注
             boolean isFollowed = redisUtil.isFollowed(currentUser.getId(), userId);
             pageInfo.put("isFollowed", isFollowed);
             pageInfo.put("userInfo", userInfo);

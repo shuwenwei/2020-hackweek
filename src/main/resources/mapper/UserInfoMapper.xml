@@ -15,6 +15,7 @@
         <foreach collection="set" open="(" separator="," close=")" item="item">
             #{item}
         </foreach>
+        and user.is_delete = 0
     </select>
 
     <select id="getViewUserInfo" resultType="com.sww.pojo.view.ViewUserInfo">

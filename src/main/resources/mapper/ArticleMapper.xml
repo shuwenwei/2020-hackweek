@@ -4,18 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sww.mapper.ArticleMapper">
     <select id="getArticles" resultType="com.sww.pojo.view.PackedArticle">
---         select article.id id, article.title title, user_info.id authorId, article.gmt_create gmtCreate, user_info.avatar_url authorAvatarUrl, user.username authorUsername
---         from article
---         inner join user_info
---         on
---         article.author_id = user_info.user_id
---         inner join user
---         on
---         user.id = article.author_id
---         where article_type = #{articleType}
---         and is_delete = 0
         <include refid="selectPackedArticleSql"/>
         and article_type = #{articleType}
+        order by article.gmt_create desc
     </select>
 
     <select id="getArticle" resultType="com.sww.pojo.view.PackedArticle">
@@ -35,4 +26,24 @@
         user.id = article.author_id
         where article.is_delete = 0
     </sql>
+
+    <select id="getArticlesBySet" resultType="com.sww.pojo.view.PackedArticle">
+        select
+        article.id id,
+        article.title title,
+        article.author_id authorId,
+        article.gmt_create gmtCreate,
+        user.username authorUsername,
+        user_info.avatar_url authorAvatarUrl
+        from article
+        inner join user
+        on user.id = article.author_id
+        inner join user_info
+        on user_info.user_id = article.author_id
+        where article.id in
+        <foreach collection="set" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and article.is_delete = 0
+    </select>
 </mapper>

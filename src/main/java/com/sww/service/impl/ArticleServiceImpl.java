@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author sww
@@ -40,5 +41,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public PackedArticle getArticle(Long id) {
         return articleMapper.getArticle(id);
+    }
+
+    @Override
+    public List<PackedArticle> getArticlesBySet(Set<Object> articleIds) {
+        return articleMapper.getArticlesBySet(articleIds);
     }
 }
