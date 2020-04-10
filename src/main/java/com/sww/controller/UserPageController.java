@@ -2,14 +2,14 @@ package com.sww.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sww.exception.BadRequestException;
-import com.sww.pojo.Article;
-import com.sww.pojo.ResponseBean;
-import com.sww.pojo.User;
-import com.sww.pojo.UserInfo;
+import com.sww.pojo.*;
+import com.sww.pojo.view.ViewAnnounce;
 import com.sww.pojo.view.ViewListUser;
 import com.sww.pojo.view.ViewUserInfo;
+import com.sww.service.AnnounceService;
 import com.sww.service.ArticleService;
 import com.sww.service.UserInfoService;
 import com.sww.util.QiniuUtil;
@@ -33,6 +33,7 @@ public class UserPageController {
 
     private UserInfoService userInfoService;
     private ArticleService articleService;
+    private AnnounceService announceService;
     private QiniuUtil qiniuUtil;
     private RedisUtil redisUtil;
     private static final String URL_PREFIX = "http://q89jpbw7d.bkt.clouddn.com/";
@@ -56,6 +57,22 @@ public class UserPageController {
     @Autowired
     public void setUserInfoService(UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
+    }
+
+    /**
+     *
+     */
+    @GetMapping("/self/announce")
+    public ResponseBean getAnnounce(@RequestParam @Min(1) int page) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        Page<ViewAnnounce> announcePage = new Page<ViewAnnounce>().setCurrent(page);
+        List<ViewAnnounce> announceList = announceService
+                .getViewAnnounceList(announcePage, user.getId())
+                .getRecords();
+        if (announceList.isEmpty()) {
+            return new ResponseBean("没有消息", null, 0);
+        }
+        return new ResponseBean("获取成功", announceList, 1);
     }
 
     /**

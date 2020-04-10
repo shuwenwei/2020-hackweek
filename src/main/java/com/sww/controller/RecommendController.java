@@ -48,7 +48,7 @@ public class RecommendController {
         return new ResponseBean("获取成功", mostLikedArticles, 1);
     }
 
-    @GetMapping("/most/follow")
+    @GetMapping("/most/followed")
     public ResponseBean getMostFollowersUsers() {
         Set<Object> mostFollowed = redisUtil.getMostFollowed();
         List<ViewListUser> mostFollowersUsers = userInfoService.getViewListUsers(mostFollowed);

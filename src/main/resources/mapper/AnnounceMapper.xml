@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sww.mapper.AnnounceMapper">
+    <select id="getViewAnnounceList" resultType="com.sww.pojo.view.ViewAnnounce">
+        select
+        announce.from_user_id fromUserId,
+        user.username fromUsername,
+        announce.content content,
+        user_info.avatar_url fromUserAvatar,
+        announce.gmt_create gmtCreate
+        from announce
+        inner join user
+        on user.id = announce.from_user_id
+        inner join user_info
+        on user_info.user_id = announce.from_user_id
+        where announce.user_id = #{userId}
+        order by announce.gmt_create desc
+    </select>
+</mapper>

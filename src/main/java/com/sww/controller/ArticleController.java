@@ -1,5 +1,6 @@
 package com.sww.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sww.exception.BadRequestException;
 import com.sww.pojo.*;
@@ -20,7 +21,6 @@ import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -161,12 +161,14 @@ public class ArticleController {
     @PostMapping("/comment")
     public ResponseBean postComment(@RequestBody @Validated ArticleComment articleComment, BindingResult bindingResult) {
         BindingResultUtil.checkBinding(bindingResult);
-
-        if (articleService.articleExist(articleComment.getToArticle())) {
+        Article article = articleService
+                .getOne(new QueryWrapper<Article>()
+                        .eq("id", articleComment.getToArticle()));
+        if (article != null) {
             User user = (User) SecurityUtils.getSubject().getPrincipal();
             Long userId = user.getId();
             articleComment.setAuthorId(userId);
-            articleCommentService.save(articleComment);
+            articleCommentService.saveComment(articleComment, article);
 
             sendMessageToArticleAuthor(articleComment);
 
@@ -192,11 +194,9 @@ public class ArticleController {
         if (comment == null) {
             throw new BadRequestException("回复的评论不存在");
         }
-
-        sendMessageToArticleAuthor(comment);
+        innerCommentService.saveInnerComment(innerComment, comment);
         sendMessageToCommentAuthor(innerComment, comment);
 
-        innerCommentService.save(innerComment);
         return new ResponseBean("发送成功", null, 1);
     }
 

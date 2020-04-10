@@ -47,6 +47,7 @@
         on user.id = ac.author_id
         where ac.to_article = #{articleId}
         and ac.is_delete = 0
+        order by ac.gmt_create desc
     </select>
 
     <resultMap id="getComments" type="com.sww.pojo.view.ViewComment">
@@ -72,5 +73,6 @@
         inner join user
         on ic.user_id = user.id
         where to_comment = #{comment_id}
+        order by ic.gmt_create
     </select>
 </mapper>
