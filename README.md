@@ -708,3 +708,57 @@
 }
 ```
 
+### 15\.获取推荐的文章
+
+#### 接口功能
+
+> 获取推荐的文章
+
+#### URL
+
+> /most/like
+
+#### HTTP请求方式
+
+> GET
+
+#### 请求头
+
+| 参数          | 类型             | 说明                |
+| ------------- | ---------------- | ------------------- |
+| Content-Type  | application/json |                     |
+| Authorization | token            | 在登录时获得的token |
+
+#### 请求体
+
+> 
+
+#### 接口示例
+
+> 地址：/most/like
+
+##### 请求
+
+``` json
+
+```
+
+##### 响应
+
+```json
+{
+    "message": "获取成功",
+    "data": [
+        {
+            "id": "1248499219426439170",
+            "title": "swank1",
+            "authorUsername": "sww",
+            "authorId": "1248438184791179265",
+            "authorAvatarUrl": "http://q89jpbw7d.bkt.clouddn.com/FsVIUUhwwO86xy4JfjBP-5suhKvP",
+            "gmtCreate": "2020-04-10 06:33:05"
+        }
+    ],
+    "status": 1
+}
+```
+
