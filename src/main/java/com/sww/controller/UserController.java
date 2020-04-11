@@ -13,6 +13,7 @@ import com.sww.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +29,7 @@ import javax.validation.constraints.Email;
 @Api(value = "注册，登录，请求发送邮件，忘记密码")
 @RestController
 @RequestMapping("/account")
+@RequiresRoles("user")
 public class UserController {
 
     private UserService userService;

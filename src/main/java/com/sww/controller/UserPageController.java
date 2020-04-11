@@ -15,6 +15,7 @@ import com.sww.service.UserInfoService;
 import com.sww.util.QiniuUtil;
 import com.sww.util.RedisUtil;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import java.util.*;
  * @author sww
  */
 @RestController
+@RequiresRoles("user")
 public class UserPageController {
 
     private UserInfoService userInfoService;

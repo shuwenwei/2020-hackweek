@@ -62,6 +62,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/**.html","anon");
         filterChainDefinitionMap.put("/**.css","anon");
         filterChainDefinitionMap.put("/**.ico","anon");
+        filterChainDefinitionMap.put("/most/**", "myJwtFilter");
+        filterChainDefinitionMap.put("/follow/**", "myJwtFilter");
         filterChainDefinitionMap.put("/api/token/**","myJwtFilter");
         filterChainDefinitionMap.put("/article/**","myJwtFilter");
         filterChainDefinitionMap.put("/self/**","myJwtFilter");

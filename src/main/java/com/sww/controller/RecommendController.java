@@ -6,6 +6,7 @@ import com.sww.pojo.view.ViewListUser;
 import com.sww.service.ArticleService;
 import com.sww.service.UserInfoService;
 import com.sww.util.RedisUtil;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import java.util.Set;
  * @author sww
  */
 @RestController
+@RequiresRoles("user")
 public class RecommendController {
     private RedisUtil redisUtil;
     private ArticleService articleService;
