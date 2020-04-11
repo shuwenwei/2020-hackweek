@@ -606,4 +606,105 @@
 }
 ```
 
-### 
+### 13\.发布story
+
+#### 接口功能
+
+> 发布story
+
+#### URL
+
+> /article/story
+
+#### HTTP请求方式
+
+> POST
+
+#### 请求头
+
+| 参数          | 类型             | 说明                |
+| ------------- | ---------------- | ------------------- |
+| Content-Type  | application/json |                     |
+| Authorization | token            | 在登录时获得的token |
+
+#### 请求体
+
+> | 参数    | 必选 | 类型   | 说明     |
+> | :------ | :--- | :----- | -------- |
+> | title   | true | string | 文章标题 |
+> | content | true | string | 文章内容 |
+
+#### 接口示例
+
+> 地址：/article/story
+
+##### 请求
+
+``` json
+{
+    "title":"story111",
+    "content":"content1f13f1fw"
+}
+```
+
+##### 响应
+
+```json
+{
+    "message": "发布成功",
+    "data": null,
+    "status": 1
+}
+```
+
+### 14\.发布swank
+
+#### 接口功能
+
+> 发布swank
+
+#### URL
+
+> /article/swank
+
+#### HTTP请求方式
+
+> POST
+
+#### 请求头
+
+| 参数          | 类型             | 说明                |
+| ------------- | ---------------- | ------------------- |
+| Content-Type  | application/json |                     |
+| Authorization | token            | 在登录时获得的token |
+
+#### 请求体
+
+> | 参数         | 必选 | 类型   | 说明     |
+> | :----------- | :--- | :----- | -------- |
+> | introduction | true | string | 文章标题 |
+> | content      | true | string | 文章内容 |
+
+#### 接口示例
+
+> 地址：/article/swank
+
+##### 请求
+
+``` json
+{
+    "title":"swank1121",
+    "content":"阿额枋ijafejaefp哈俄"
+}
+```
+
+##### 响应
+
+```json
+{
+    "message": "发布成功",
+    "data": null,
+    "status": 1
+}
+```
+
