@@ -46,6 +46,9 @@ public class RecommendController {
     @GetMapping("/most/like")
     public ResponseBean getMostLikedArticle() {
         Set<Object> mostLiked = redisUtil.getMostLiked();
+        if (mostLiked.isEmpty()) {
+            return new ResponseBean("还没有可推荐的文章", null, 0);
+        }
         List<PackedArticle> mostLikedArticles = articleService.getArticlesBySet(mostLiked);
         return new ResponseBean("获取成功", mostLikedArticles, 1);
     }
@@ -53,6 +56,9 @@ public class RecommendController {
     @GetMapping("/most/followed")
     public ResponseBean getMostFollowersUsers() {
         Set<Object> mostFollowed = redisUtil.getMostFollowed();
+        if (mostFollowed.isEmpty()) {
+            return new ResponseBean("还没有可推荐的文章用户", null, 0);
+        }
         List<ViewListUser> mostFollowersUsers = userInfoService.getViewListUsers(mostFollowed);
         return new ResponseBean("获取成功", mostFollowersUsers, 1);
     }
