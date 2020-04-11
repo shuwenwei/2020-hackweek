@@ -226,7 +226,7 @@ public class UserPageController {
 //        当前用户id
         Long userId = user.getId();
 
-        if (userInfoService.getById(followedUserId) == null) {
+        if (userInfoService.getUserInfo(followedUserId) == null) {
             throw new BadRequestException("关注的用户不存在");
         } else if (userId.equals(followedUserId)) {
             throw new BadRequestException("无法关注");

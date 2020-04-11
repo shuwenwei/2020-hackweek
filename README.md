@@ -756,6 +756,65 @@
             "authorId": "1248438184791179265",
             "authorAvatarUrl": "http://q89jpbw7d.bkt.clouddn.com/FsVIUUhwwO86xy4JfjBP-5suhKvP",
             "gmtCreate": "2020-04-10 06:33:05"
+        },
+        {
+            "id": "1248499299978047489",
+            "title": "story1",
+            "authorUsername": "sww",
+            "authorId": "1248438184791179265",
+            "authorAvatarUrl": "http://q89jpbw7d.bkt.clouddn.com/FsVIUUhwwO86xy4JfjBP-5suhKvP",
+            "gmtCreate": "2020-04-10 06:33:24"
+        }
+    ],
+    "status": 1
+}
+```
+
+### 16\.获取推荐的用户
+
+#### 接口功能
+
+> 获取推荐的用户
+
+#### URL
+
+> /most/followed
+
+#### HTTP请求方式
+
+> GET
+
+#### 请求头
+
+| 参数          | 类型             | 说明                |
+| ------------- | ---------------- | ------------------- |
+| Content-Type  | application/json |                     |
+| Authorization | token            | 在登录时获得的token |
+
+#### 请求体
+
+> 
+
+#### 接口示例
+
+> 地址：/most/followed
+
+##### 请求
+
+``` json
+
+```
+
+##### 响应
+
+```json
+{
+    "message": "获取成功",
+    "data": [
+        {
+            "userId": "1248138184744479265",
+            "username": "sww1",
+            "avatarUrl": "http://q89jpbw7d.bkt.clouddn.com/FsVIUUhwwO86xy4JfjBP-5suhKvP"
         }
     ],
     "status": 1
