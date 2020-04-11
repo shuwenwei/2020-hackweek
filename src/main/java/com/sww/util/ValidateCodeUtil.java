@@ -53,9 +53,9 @@ public class ValidateCodeUtil {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setSubject(subject);
         message.setTo(to);
-        message.setFrom("13979062948@163.com");
+        message.setFrom("sww@shuww.top");
         String validateCode = generateValidateCode();
-        String text = "validateCode : " + validateCode;
+        String text = "您好！ \n 您申请了验证邮箱,邮箱验证码 : " + validateCode + ",10分钟内有效\n  本邮件由系统自动发出，请勿回复。 ";
         redisUtil.set("validateCode::" + to, validateCode,60 * 10);
         message.setText(text);
         javaMailSender.send(message);
