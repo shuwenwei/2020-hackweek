@@ -821,3 +821,221 @@
 }
 ```
 
+### 17\.关注用户
+
+#### 接口功能
+
+> 关注用户或取消关注
+
+#### URL
+
+> /follow/{userId}
+
+#### HTTP请求方式
+
+> POST
+
+#### 请求头
+
+| 参数          | 类型             | 说明                |
+| ------------- | ---------------- | ------------------- |
+| Content-Type  | application/json |                     |
+| Authorization | token            | 在登录时获得的token |
+
+#### 请求体
+
+> 
+
+#### 接口示例
+
+> 地址：/follow/1248138184744479265
+
+##### 请求
+
+``` json
+
+```
+
+##### 响应
+
+```json
+{
+    "message": "关注成功",
+    "data": null,
+    "status": 1
+}
+// 如果已经关注则返回
+{
+    "message": "取消关注成功",
+    "data": null,
+    "status": 1
+}
+```
+
+### 18\.点赞或取消点赞文章
+
+#### 接口功能
+
+> 点赞或取消点赞文章
+
+#### URL
+
+> article/like/{articleId}
+
+#### HTTP请求方式
+
+> POST
+
+#### 请求头
+
+| 参数          | 类型             | 说明                |
+| ------------- | ---------------- | ------------------- |
+| Content-Type  | application/json |                     |
+| Authorization | token            | 在登录时获得的token |
+
+#### 请求体
+
+> 
+
+#### 接口示例
+
+> 地址：article/like/1248499299978047489
+
+##### 请求
+
+``` json
+
+```
+
+##### 响应
+
+```json
+{
+    "message": "点赞成功",
+    "data": null,
+    "status": 1
+}
+// 如果已经关注则返回
+{
+    "message": "取消点赞成功",
+    "data": null,
+    "status": 1
+}
+```
+
+### 19\.获取swank
+
+#### 接口功能
+
+> 获取swank
+
+#### URL
+
+> /article/swank?page=
+
+#### HTTP请求方式
+
+> GET
+
+#### 请求头
+
+| 参数          | 类型             | 说明                |
+| ------------- | ---------------- | ------------------- |
+| Content-Type  | application/json |                     |
+| Authorization | token            | 在登录时获得的token |
+
+#### 请求参数
+
+> | 参数名称 | 类型     | 说明 |
+> | -------- | -------- | ---- |
+> | page     | int(>=1) | 页数 |
+>
+> 
+
+#### 接口示例
+
+> 地址：/article/swank?page=1
+
+##### 请求
+
+``` json
+
+```
+
+##### 响应
+
+```json
+{
+    "message": "获取成功",
+    "data": [
+        {
+            "id": "1248499219426439170",
+            "title": "swank1",
+            "authorUsername": "sww",
+            "authorId": "1248438184833122306",
+            "authorAvatarUrl": "http://q89jpbw7d.bkt.clouddn.com/FsVIUUhwwO86xy4JfjBP-5suhKvP",
+            "gmtCreate": "2020-04-10 06:33:05"
+        }
+    ],
+    "status": 1
+}
+```
+
+### 20\.获取story
+
+#### 接口功能
+
+> 获取story
+
+#### URL
+
+> /article/story?page=
+
+#### HTTP请求方式
+
+> GET
+
+#### 请求头
+
+| 参数          | 类型             | 说明                |
+| ------------- | ---------------- | ------------------- |
+| Content-Type  | application/json |                     |
+| Authorization | token            | 在登录时获得的token |
+
+#### 请求参数
+
+> | 参数名称 | 类型     | 说明 |
+> | -------- | -------- | ---- |
+> | page     | int(>=1) | 页数 |
+>
+> 
+
+#### 接口示例
+
+> 地址：/article/swank?page=1
+
+##### 请求
+
+``` json
+
+```
+
+##### 响应
+
+```json
+{
+    "message": "获取成功",
+    "data": [
+        {
+            "id": "1248499299978047489",
+            "title": "story1",
+            "authorUsername": "sww",
+            "authorId": "1248438184833122306",
+            "authorAvatarUrl": "http://q89jpbw7d.bkt.clouddn.com/FsVIUUhwwO86xy4JfjBP-5suhKvP",
+            "gmtCreate": "2020-04-10 06:33:24"
+        }
+    ],
+    "status": 1
+}
+```
+
