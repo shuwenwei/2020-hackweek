@@ -15,4 +15,9 @@ public class ExceptionController {
     public ResponseBean badRequest(BadRequestException exception) {
         return new ResponseBean(exception.getMessage(), null, 0);
     }
+
+    @ExceptionHandler(value = RuntimeException.class)
+    public ResponseBean serverException(RuntimeException exception) {
+        return new ResponseBean("服务器出错了", null, 0);
+    }
 }
